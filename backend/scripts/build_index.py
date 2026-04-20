@@ -13,7 +13,7 @@ DATA_DIR = str(Path(__file__).parent.parent.parent / "data" / os.getenv("DATA_FO
 S3_BUCKET = os.getenv("S3_BUCKET")
 S3_INDEX_KEY = os.getenv("S3_INDEX_KEY")
 EMBEDDING_MODEL_ID = os.getenv("EMBEDDING_MODEL_ID")
-AWS_REGION = os.getenv("AWS_REGION")
+AWS_REGION = os.getenv("BEDROCK_REGION")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP"))
 
