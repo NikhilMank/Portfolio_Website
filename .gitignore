@@ -122,11 +122,11 @@ celerybeat.pid
 # Environments
 .env
 .venv
-env/*
-venv/*
-ENV/*
-env.bak/*
-venv.bak/*
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
 # Spyder project settings
 .spyderproject
@@ -159,4 +159,7 @@ cython_debug/
 .idea/
 
 # Data files - keeping the existing pattern from context
-data/MyData/*
+data/MyData/
+backend/lambda/package/
+backend/lambda/lambda_package.zip
+backend/scripts/test_rag.py
