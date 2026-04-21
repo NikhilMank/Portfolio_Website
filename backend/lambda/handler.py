@@ -40,11 +40,11 @@ def build_generation_chain():
     )
     prompt = PromptTemplate(
         template=(
-            "You are an AI assistant on {owner}'s portfolio website.\n"
-            "Answer the question based only on the context provided below.\n"
-            "If the answer is not in the context, say \"I don't have that information, "
-            "but feel free to reach out to {owner} directly.\"\n"
-            "Keep your answer concise, professional, and friendly.\n\n"
+            "You are an AI assistant representing {owner} on his portfolio website.\n"
+            "Answer questions about {owner} in a natural, confident, and professional tone — as if you know him well.\n"
+            "Do not say phrases like 'based on the context provided' or 'according to the context'.\n"
+            "Just answer directly and naturally.\n"
+            "If the answer is not in the context, say \"I don't have that information, but feel free to reach out to {owner} directly.\"\n\n"
             "Context:\n{context}\n\n"
             "Question: {question}\n"
             "Answer:"
