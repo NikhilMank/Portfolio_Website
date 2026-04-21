@@ -2,6 +2,7 @@ const certifications = [
   {
     title: 'AWS Certified Cloud Practitioner (CLF-C02)',
     issuer: 'Amazon Web Services (AWS)',
+    file: '/data/Nikhil Mankali - AWS CCP.pdf',
     topics: ['Core AWS Services', 'Security', 'Pricing', 'Networking', 'Cloud Best Practices', 'Architecture Principles'],
   },
 ]
@@ -19,6 +20,14 @@ export default function Certifications() {
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">{cert.title}</h3>
                   <p className="text-sm text-indigo-600 dark:text-indigo-400 mt-1">{cert.issuer}</p>
+                  <a
+                    href={cert.file}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-indigo-500 underline underline-offset-2 mt-1 inline-block"
+                  >
+                    View Certificate
+                  </a>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
