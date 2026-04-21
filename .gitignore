@@ -173,6 +173,10 @@ frontend/.env
 frontend/.env.local
 frontend/coverage/
 frontend/.vite/
+frontend/.cache/
+frontend/src/assets/react.svg
+frontend/src/assets/vite.svg
+frontend/README.md
 
 # Logs
 logs
