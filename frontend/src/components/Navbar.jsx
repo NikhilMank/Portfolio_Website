@@ -1,5 +1,5 @@
 export default function Navbar({ darkMode, setDarkMode }) {
-  const links = ['Skills', 'Experience', 'Internship', 'Education', 'Projects', 'Contact']
+  const links = ['Skills', 'Experience', 'Internship', 'Education', 'Certifications', 'Projects', 'Contact']
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
