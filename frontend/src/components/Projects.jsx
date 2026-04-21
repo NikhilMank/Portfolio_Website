@@ -3,19 +3,19 @@ const projects = [
     title: 'AI Portfolio Website with RAG Chatbot',
     description: 'Personal portfolio with an embedded AI chatbot that answers questions about my profile using Retrieval-Augmented Generation.',
     tags: ['React', 'AWS Lambda', 'FAISS', 'Amazon Bedrock', 'LangChain', 'S3', 'CloudFront'],
-    github: null,
+    github: 'https://github.com/NikhilMank/Portfolio_Website',
   },
   {
     title: 'Production-Grade Azure RAG Chatbot',
     description: 'Enterprise-style RAG chatbot for GDPR Q&A. Achieved 0.89 RAGAS faithfulness score and improved answer relevance by 23% through A/B testing.',
     tags: ['Azure OpenAI', 'Azure AI Search', 'FastAPI', 'LangChain', 'Docker', 'RAGAS'],
-    github: null,
+    github: 'https://github.com/BharAI-Lab/rag_azure_fastapi',
   },
   {
     title: 'Smart Receipt Scanner',
     description: 'Serverless web app for scanning receipts, extracting expense data via OCR, and tracking budgets with a personal analytics dashboard.',
     tags: ['AWS Lambda', 'S3', 'DynamoDB', 'Cognito', 'React', 'Python'],
-    github: null,
+    github: 'https://github.com/NikhilMank/Smart-Receipt-Scanner',
   },
   {
     title: 'Research Paper Scraper & Newsletter Generator',
