@@ -4,8 +4,8 @@ export default function Hero() {
   const [showDropdown, setShowDropdown] = useState(false)
 
   const resumes = [
-    { label: '🇬🇧 English', file: '/resumes/Nikhil Mankali-Resume.pdf' },
-    { label: '🇩🇪 German', file: '/resumes/Nikhil Mankali-Lebenslauf.pdf' },
+    { label: '🇬🇧 English', file: '/data/Nikhil Mankali-Resume.pdf' },
+    { label: '🇩🇪 German', file: '/data/Nikhil Mankali-Lebenslauf.pdf' },
   ]
   return (
     <section className="min-h-screen flex items-center justify-center pt-20 px-6">
