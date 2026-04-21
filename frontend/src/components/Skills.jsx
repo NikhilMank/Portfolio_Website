@@ -1,23 +1,27 @@
 const skillGroups = [
   {
-    category: 'AI / ML',
-    skills: ['PyTorch', 'TensorFlow', 'HuggingFace', 'Scikit-learn', 'OpenCV', 'MLflow', 'Weights & Biases'],
+    category: 'Programming',
+    skills: ['Python', 'C++', 'SQL', 'Bash', 'HTML', 'CSS', 'JavaScript'],
+  },
+  {
+    category: 'ML / DL Frameworks',
+    skills: ['PyTorch', 'TensorFlow', 'HuggingFace', 'Scikit-learn', 'OpenCV', 'NumPy', 'Pandas', 'Matplotlib', 'Seaborn', 'TensorBoard', 'Weights & Biases', 'MLflow'],
   },
   {
     category: 'LLM / GenAI',
-    skills: ['LangChain', 'LangGraph', 'RAG', 'Prompt Engineering', 'LLM Fine-tuning', 'Amazon Bedrock', 'FastMCP'],
+    skills: ['NLP', 'LLMs', 'Prompt Engineering', 'Transformers', 'LLM Fine-tuning', 'Model Serving', 'OpenAPI'],
   },
   {
-    category: 'Vector Stores',
-    skills: ['FAISS', 'ChromaDB', 'Azure AI Search', 'Neo4j'],
+    category: 'RAG & Agentic AI',
+    skills: ['LangChain', 'LangGraph', 'Amazon Bedrock Agentcore', 'Azure AI Foundry', 'FastMCP', 'FastAPI', 'Streamlit'],
   },
   {
-    category: 'Cloud / DevOps',
-    skills: ['AWS', 'Azure', 'Docker', 'Kubernetes', 'Terraform', 'GitHub Actions', 'CI/CD'],
+    category: 'Databases & Retrieval',
+    skills: ['PostgreSQL', 'MongoDB', 'FAISS', 'ChromaDB', 'Azure AI Search', 'Neo4j'],
   },
   {
-    category: 'Backend',
-    skills: ['Python', 'FastAPI', 'REST APIs', 'Microservices', 'Serverless'],
+    category: 'Cloud & Deployment',
+    skills: ['AWS', 'Azure', 'Docker', 'Kubernetes', 'Grafana', 'Prometheus', 'Terraform (IaC)', 'CloudFormation (IaC)', 'GitHub', 'GitHub Actions', 'GitLab'],
   },
   {
     category: 'Frontend',
