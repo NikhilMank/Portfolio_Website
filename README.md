@@ -1,0 +1,184 @@
+# Portfolio with RAG Chatbot
+
+A modern, serverless portfolio website featuring an AI-powered Retrieval-Augmented Generation (RAG) chatbot that answers questions about a person's professional background using his personal data.
+
+## Description
+
+This project showcases a full-stack portfolio application combining a responsive React frontend with a cloud-native AWS backend. The highlight is an intelligent chatbot that uses RAG technology to provide personalized, context-aware responses about the portfolio owner's experience, skills, and projects.
+
+## Features
+
+### Portfolio Sections
+- **Hero**: Professional introduction and overview
+- **Skills**: Technical competencies across multiple domains
+- **Experience**: Work history and professional achievements
+- **Internship**: Internship experiences and learnings
+- **Education**: Academic background and qualifications
+- **Certifications**: Professional certifications
+- **Projects**: Portfolio of completed work
+- **Contact**: Contact information and links
+
+### AI Chatbot
+- **RAG-Powered Q&A**: Answers questions based on indexed personal data
+- **Real-time Interaction**: Instant responses via AWS Lambda
+- **Contextual Responses**: Retrieves relevant information from resume, bio, and project details
+- **Professional Persona**: Responds as if personally familiar with the portfolio owner
+
+## Tech Stack
+
+### Frontend
+- **React 19**: Modern UI framework
+- **Vite 8**: Fast build tool and dev server
+- **Tailwind CSS 4**: Utility-first styling framework
+
+### Backend
+- **Python 3**: Serverless runtime
+- **AWS Lambda**: Serverless compute platform
+- **Amazon Bedrock**: Managed AI models (Claude 3 Haiku, Titan Embeddings)
+- **LangChain**: RAG orchestration framework
+- **FAISS**: Vector similarity search
+- **AWS S3**: Index storage
+- **AWS API Gateway**: HTTP API endpoint
+- **AWS CloudFront**: CDN
+
+### Data Processing
+- **Unstructured**: Markdown document parsing
+- **NumPy**: Numerical computations
+
+## Architecture Overview
+
+### RAG System Flow
+
+1. **Indexing Phase**:
+   - Markdown files from `data/MyData/` are loaded and parsed
+   - Documents are split into semantic chunks (500 chars, 100 overlap)
+   - Text chunks are converted to embeddings using Amazon Titan
+   - FAISS index is built and stored in AWS S3
+
+2. **Query Processing**:
+   - User question → Lambda function
+   - Question embedded and searched against FAISS index
+   - Top-K relevant chunks retrieved (default: 5)
+   - Context + question fed to Claude 3 Haiku for generation
+   - Personalized response returned
+
+### Project Structure
+```
+Portfolio_with_RAG/
+├── frontend/               # React application
+│   ├── src/components/     # Portfolio section components
+│   ├── src/App.jsx         # Main app with routing
+│   └── package.json        # Frontend dependencies
+├── backend/lambda/         # AWS Lambda function
+│   ├── handler.py          # RAG logic and API handler
+│   └── requirements.txt    # Python dependencies for handler
+├── backen/scripts/         # Utility scripts
+│   ├── build_index.py      # FAISS index creation
+│   ├── test_rag.py         # Test RAG locally
+├── data/MyData/            # Personal portfolio content (Markdown)
+├── requirements.txt        # Development dependencies
+└── .env                    # Environment Variables
+```
+
+## Installation
+
+### Prerequisites
+- Node.js 18+ (for frontend development)
+- Python 3.8+ (for backend and scripts)
+- AWS CLI configured with appropriate permissions
+- AWS account with access to Lambda, S3, Bedrock, API Gateway
+
+### Frontend Setup
+```bash
+cd frontend
+npm install
+```
+
+### Backend Setup
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# For Lambda deployment, use vendored dependencies
+cd backend/lambda
+pip install -r requirements.txt -t package/
+```
+
+### Environment Configuration
+Create a `.env` file based on `.env.example`:
+```env
+# AWS Configuration
+S3_BUCKET=your-s3-bucket-name
+S3_INDEX_KEY=faiss/index
+EMBEDDING_MODEL_ID=amazon.titan-embed-text-v2:0
+LLM_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
+BEDROCK_REGION=us-east-1
+PORTFOLIO_OWNER=owner-name
+
+# Frontend
+VITE_API_URL=https://your-api-gateway-url.amazonaws.com/prod/chat
+```
+
+## Usage
+
+### Local Development
+
+#### Frontend
+```bash
+cd frontend
+npm run dev          # Start dev server with HMR
+npm run build        # Build for production
+npm run preview      # Preview production build
+```
+
+#### Backend Testing
+```bash
+# Build FAISS index from local data
+python scripts/build_index.py
+
+# Test RAG system locally
+python scripts/test_rag.py
+```
+
+### Deployment
+
+1. **Build and Upload Index**:
+   ```bash
+   python scripts/build_index.py
+   # Upload generated index files to S3
+   aws s3 cp faiss_index/ s3://your-bucket/faiss/ --recursive
+   ```
+
+2. **Deploy Lambda Function**:
+   - Package the `backend/lambda/` directory
+   - Deploy to AWS Lambda with environment variables
+   - Configure API Gateway trigger
+
+3. **Deploy Frontend**:
+   - Build the frontend: `npm run build`
+   - Deploy `dist/` folder to static hosting (Vercel, Netlify, S3)
+
+4. **Configure CORS**:
+   - Ensure API Gateway allows requests from your frontend domain
+
+## API Reference
+
+### Chat Endpoint
+**POST** `/chat`
+
+Request body:
+```json
+{
+  "question": "What are your main technical skills?"
+}
+```
+
+Response:
+```json
+{
+  "answer": "Based on my background, my main technical skills include..."
+}
+```
+
+## 👨💻 Author
+Developed by **Nikhil Mankali**
