@@ -164,7 +164,6 @@ data/MyData/
 # Backend
 backend/lambda/package/
 backend/lambda/lambda_package.zip
-backend/scripts/test_rag.py
 
 # Frontend
 frontend/node_modules/
