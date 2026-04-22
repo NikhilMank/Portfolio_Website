@@ -20,8 +20,8 @@ export default function Hero() {
           AI Engineer
         </h2>
         <p className="text-gray-600 dark:text-gray-400 text-lg mb-10 leading-relaxed">
-          I build production-ready AI systems — from RAG pipelines and LLM applications
-          to cloud-native deployments. Open to AI Engineer, GenAI Engineer, and MLOps roles.
+          I build production-ready AI systems, from RAG pipelines and LLM applications
+          to cloud-native deployments. Open to AI Engineer, GenAI Engineer, Backend Engineer, and MLOps & Cloud roles.
         </p>
         <div className="flex justify-center gap-4">
           <a
