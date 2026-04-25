@@ -33,7 +33,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Deploy to S3      # Syncs the bucket with the new built, uploads only files that are changed
-        run: aws s3 sync frontend/dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+        run: aws s3 sync frontend/dist/ s3://${{ secrets.FRONTEND_BUCKET_NAME }} --delete
       - name: Invalidate CloudFront cache       # Clear the cache
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}  --paths "/*"
   deploy-backend:
@@ -74,6 +74,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Upload zip to S3      # Uploads the created .zip file to s3 bucket that has the package file
-        run: aws s3 cp backend/lambda/lambda_package.zip s3://${{ secrets.LAMBDA_BUCKET_NAME }}/lambda/lambda_package.zip
+        run: aws s3 cp backend/lambda/lambda_package.zip s3://${{ secrets.BACKEND_BUCKET_NAME }}/lambda/lambda_package.zip
       - name: Update Lambda function
-        run: aws lambda update-function-code --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} --s3-bucket ${{ secrets.LAMBDA_BUCKET_NAME }} --s3-key lambda/lambda_package.zip
+        run: aws lambda update-function-code --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} --s3-bucket ${{ secrets.BACKEND_BUCKET_NAME }} --s3-key lambda/lambda_package.zip
