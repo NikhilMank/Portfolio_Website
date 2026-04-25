@@ -26,6 +26,8 @@ jobs:
       - name: Build frontend        # Builds the frontend
         run: npm run build
         working-directory: frontend
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
       - name: Configure AWS Credentials     # Configures AWS credentials in CLI
         uses: aws-actions/configure-aws-credentials@v4
         with: 
