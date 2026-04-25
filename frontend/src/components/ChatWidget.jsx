@@ -4,6 +4,8 @@ const API_URL = import.meta.env.VITE_API_URL
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false)
+  const [showHint, setShowHint] = useState(true)
+  const [hovered, setHovered] = useState(false)
   const [messages, setMessages] = useState([
     { role: 'assistant', text: "Hi! I'm Nikhil's AI assistant. Ask me questions and I will answer them as best as I can." }
   ])
@@ -14,6 +16,11 @@ export default function ChatWidget() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowHint(false), 6000)
+    return () => clearTimeout(timer)
+  }, [])
 
   async function sendMessage() {
     const question = input.trim()
@@ -46,9 +53,10 @@ export default function ChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+    <>
+      {/* Chat panel — full-width on mobile, fixed width on desktop */}
       {open && (
-        <div className="w-80 sm:w-96 h-[500px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed bottom-24 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 h-[60vh] sm:h-[500px] z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="px-4 py-3 bg-indigo-600 dark:bg-indigo-700 flex justify-between items-center">
             <div>
@@ -102,14 +110,21 @@ export default function ChatWidget() {
         </div>
       )}
 
-      {/* Floating button */}
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg flex items-center justify-center text-2xl transition-colors"
-        aria-label="Open chat"
-      >
-        {open ? '✕' : '🤖'}
-      </button>
-    </div>
+      {/* Floating button + hint bubble */}
+      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+        <div className={`bg-indigo-50 dark:bg-gray-900 text-indigo-900 dark:text-gray-200 text-sm font-medium px-4 py-2 rounded-full shadow-lg border border-indigo-200 dark:border-gray-700 whitespace-nowrap transition-all duration-300 ${(showHint || hovered) && !open ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}`}>
+          Got questions? Ask away
+        </div>
+        <button
+          onClick={() => { setOpen(!open); setShowHint(false) }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className="w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg flex items-center justify-center text-2xl transition-colors shrink-0"
+          aria-label="Open chat"
+        >
+          {open ? '✕' : '🤖'}
+        </button>
+      </div>
+    </>
   )
 }
