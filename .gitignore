@@ -158,9 +158,6 @@ cython_debug/
 #  Community Edition, use 'PyCharm CE' and for PyCharm Professional Edition, use 'PyCharm'.
 .idea/
 
-# Data files - keeping the existing pattern from context
-data/MyData/
-
 # Backend
 backend/lambda/package/
 backend/lambda/lambda_package.zip
