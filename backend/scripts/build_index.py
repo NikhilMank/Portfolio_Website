@@ -9,7 +9,7 @@ from langchain_community.vectorstores import FAISS
 
 load_dotenv()
 
-DATA_DIR = str(Path(__file__).parent.parent.parent / "data" / os.getenv("DATA_FOLDER"))
+DATA_DIR = str(Path(__file__).resolve().parent.parent.parent / "data" / os.environ["DATA_FOLDER"])
 S3_BUCKET = os.getenv("S3_BUCKET")
 S3_INDEX_KEY = os.getenv("S3_INDEX_KEY")
 EMBEDDING_MODEL_ID = os.getenv("EMBEDDING_MODEL_ID")
