@@ -23,7 +23,7 @@ export default function Internship() {
           {internships.map((intern, i) => (
             <div key={i} className="relative">
               <div className="absolute -left-10 w-4 h-4 rounded-full bg-indigo-600 dark:bg-indigo-400 border-4 border-white dark:border-gray-950" />
-              <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+              <div className="bg-gray-100 dark:bg-gray-900 rounded-xl p-6 border border-gray-300 dark:border-gray-800">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
                   <h3 className="font-semibold text-gray-900 dark:text-white">{intern.role}</h3>
                   <span className="text-sm text-indigo-600 dark:text-indigo-400 mt-1 md:mt-0 shrink-0">{intern.period}</span>

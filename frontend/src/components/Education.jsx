@@ -35,14 +35,14 @@ const education = [
 
 export default function Education() {
   return (
-    <section id="education" className="py-24 px-6 bg-gray-50 dark:bg-gray-900/50">
+    <section id="education" className="py-24 px-6 bg-gray-100 dark:bg-gray-900/50">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">Education</h2>
         <div className="relative border-l-2 border-indigo-600 dark:border-indigo-400 pl-8 space-y-12">
           {education.map((edu, i) => (
             <div key={i} className="relative">
               <div className="absolute -left-10 w-4 h-4 rounded-full bg-indigo-600 dark:bg-indigo-400 border-4 border-white dark:border-gray-950" />
-              <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+              <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-300 dark:border-gray-800">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-1">
                   <h3 className="font-semibold text-gray-900 dark:text-white">{edu.degree}</h3>
                   <span className="text-sm text-indigo-600 dark:text-indigo-400 mt-1 md:mt-0 shrink-0">{edu.period}</span>

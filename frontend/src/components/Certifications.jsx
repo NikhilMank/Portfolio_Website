@@ -14,7 +14,7 @@ export default function Certifications() {
         <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">Certifications</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {certifications.map((cert, i) => (
-            <div key={i} className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 flex flex-col gap-3">
+            <div key={i} className="bg-gray-100 dark:bg-gray-900 rounded-xl p-6 border border-gray-300 dark:border-gray-800 flex flex-col gap-3">
               <div className="flex items-start gap-4">
                 <div className="text-3xl">🏅</div>
                 <div>

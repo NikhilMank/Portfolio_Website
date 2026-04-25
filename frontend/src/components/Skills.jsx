@@ -36,7 +36,7 @@ export default function Skills() {
         <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">Skills</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {skillGroups.map(group => (
-            <div key={group.category} className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+            <div key={group.category} className="bg-gray-100 dark:bg-gray-900 rounded-xl p-6 border border-gray-300 dark:border-gray-800">
               <h3 className="text-indigo-600 dark:text-indigo-400 font-semibold mb-4">{group.category}</h3>
               <div className="flex flex-wrap gap-2">
                 {group.skills.map(skill => (
