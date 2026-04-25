@@ -4,8 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'frontend/**'
-      - 'backend/**'
+      - 'frontend/**'               # detects changes in the frontend
+      - 'backend/**'                # detects changes in the backend
+      - '.github/workflows/**'      # detects changes in this file to re-run the workflow
 
 jobs:
   deploy-frontend:
