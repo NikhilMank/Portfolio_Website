@@ -58,6 +58,7 @@ jobs:
         run: |
           find package/ -name "*.dist-info" -type d -exec rm -rf {} +
           find package/ -name "__pycache__" -type d -exec rm -rf {} +
+          du -sh package/
         working-directory: backend/lambda
       - name: Package Lambda    # Copy the lambda function file into package/ and zip it
         run: |
