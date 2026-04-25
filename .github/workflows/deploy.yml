@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Cache Python packages
+      - name: Cache Python packages     # cache python packages to skip install everytime
         id: cache
         uses: actions/cache@v4
         with:
@@ -53,6 +53,11 @@ jobs:
       - name: Installing dependencies   # Install Python packages
         if: steps.cache.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt -t package/
+        working-directory: backend/lambda
+      - name: Clean up unnecessary files    # Remove unnecessary packages to reduce size of .zip 
+        run: |
+          find package/ -name "*.dist-info" -type d -exec rm -rf {} +
+          find package/ -name "__pycache__" -type d -exec rm -rf {} +
         working-directory: backend/lambda
       - name: Package Lambda    # Copy the lambda function file into package/ and zip it
         run: |
