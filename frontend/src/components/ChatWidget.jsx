@@ -4,6 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false)
+  const [maximized, setMaximized] = useState(false)
   const [showHint, setShowHint] = useState(true)
   const [hovered, setHovered] = useState(false)
   const [messages, setMessages] = useState([
@@ -56,14 +57,27 @@ export default function ChatWidget() {
     <>
       {/* Chat panel — full-width on mobile, fixed width on desktop */}
       {open && (
-        <div className="fixed bottom-24 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 h-[60vh] sm:h-[500px] z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div className={`fixed z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${maximized ? 'inset-4' : 'bottom-24 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 h-[60vh] sm:h-[500px]'}`}>
           {/* Header */}
           <div className="px-4 py-3 bg-indigo-600 dark:bg-indigo-700 flex justify-between items-center">
             <div>
               <p className="text-white font-semibold text-sm">Ask Nikhil's AI</p>
               <p className="text-indigo-200 text-xs">Powered by Amazon Bedrock</p>
             </div>
-            <button onClick={() => setOpen(false)} className="text-white hover:text-indigo-200 text-lg">✕</button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setMaximized(m => !m)} className="text-white hover:text-indigo-200" aria-label={maximized ? 'Restore' : 'Maximise'}>
+                {maximized ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                  </svg>
+                )}
+              </button>
+              <button onClick={() => setOpen(false)} className="text-white hover:text-indigo-200 text-lg" aria-label="Close">✕</button>
+            </div>
           </div>
 
           {/* Messages */}
