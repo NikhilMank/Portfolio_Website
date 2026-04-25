@@ -44,7 +44,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Cache Python packages
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: backend/lambda/package
+          key: lambda-deps-${{ hashFiles('backend/lambda/requirements.txt') }}
       - name: Installing dependencies   # Install Python packages
+        if: steps.cache.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt -t package/
         working-directory: backend/lambda
       - name: Package Lambda    # Copy the lambda function file into package/ and zip it
