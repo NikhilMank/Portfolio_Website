@@ -199,3 +199,4 @@ dist-ssr
 *.sln
 *.sw?
 frontend/public/JAF-279.jpg
+.github/workflows/old-deploy.yml

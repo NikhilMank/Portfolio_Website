@@ -1,0 +1,58 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/lambda/**'
+      - '.github/workflows/deploy-backend.yml'
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache Python packages
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: backend/lambda/package
+          key: lambda-deps-v2-${{ hashFiles('backend/lambda/requirements.txt') }}
+
+      - name: Install dependencies  # Install Python packages
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements.txt -t package/
+        working-directory: backend/lambda
+
+      - name: Clean up unnecessary files    # Remove unnecessary packages to reduce size of .zip
+        run: |
+          find package/ -name "*.dist-info" -type d -exec rm -rf {} +
+          find package/ -name "__pycache__" -type d -exec rm -rf {} +
+        working-directory: backend/lambda
+
+      - name: Package Lambda    # Copy the lambda function file into package/ and zip it
+        run: |
+          cp handler.py package/
+          cd package
+          zip -r ../lambda_package.zip .
+        working-directory: backend/lambda
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload zip to S3
+        run: aws s3 cp backend/lambda/lambda_package.zip s3://${{ secrets.BACKEND_BUCKET_NAME }}/lambda/lambda_package.zip
+
+      - name: Update Lambda function
+        run: aws lambda update-function-code --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} --s3-bucket ${{ secrets.BACKEND_BUCKET_NAME }} --s3-key lambda/lambda_package.zip

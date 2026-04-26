@@ -1,0 +1,51 @@
+name: Build FAISS Index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/MyData/**'
+      - '.github/workflows/build-index.yml'
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache Python packages
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: scripts-deps-${{ hashFiles('backend/scripts/requirements.txt') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements.txt
+        working-directory: backend/scripts
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Build and upload FAISS index
+        env:
+          DATA_FOLDER: ${{ secrets.DATA_FOLDER }}
+          S3_BUCKET: ${{ secrets.BACKEND_BUCKET_NAME }}
+          S3_INDEX_KEY: ${{ secrets.S3_INDEX_KEY }}
+          EMBEDDING_MODEL_ID: ${{ secrets.EMBEDDING_MODEL_ID }}
+          BEDROCK_REGION: ${{ secrets.AWS_REGION }}
+          CHUNK_SIZE: ${{ secrets.CHUNK_SIZE }}
+          CHUNK_OVERLAP: ${{ secrets.CHUNK_OVERLAP }}
+        run: python build_index.py
+        working-directory: backend/scripts
