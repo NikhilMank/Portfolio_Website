@@ -5,7 +5,8 @@ on:
     branches: [main]
     paths:
       - 'frontend/**'               # detects changes in the frontend
-      - 'backend/**'                # detects changes in the backend
+      - 'backend/lambda/**'         # detects changes in backend/lambda
+      - 'data/MyData/**'            # detects changes in data/MyData
       - '.github/workflows/**'      # detects changes in this file to re-run the workflow
 
 jobs:
@@ -79,3 +80,39 @@ jobs:
         run: aws s3 cp backend/lambda/lambda_package.zip s3://${{ secrets.BACKEND_BUCKET_NAME }}/lambda/lambda_package.zip
       - name: Update Lambda function
         run: aws lambda update-function-code --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} --s3-bucket ${{ secrets.BACKEND_BUCKET_NAME }} --s3-key lambda/lambda_package.zip
+  build-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cache Python Packages
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: scripts-deps-${{ hashFiles('backend/scripts/requirements.txt') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements.txt
+        working-directory: backend/scripts
+      - name: Configure AWS Credentials     # Configures AWS credentials in CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Build and upload FAISS index
+        env:
+          DATA_FOLDER: ${{ secrets.DATA_FOLDER }}
+          S3_BUCKET: ${{ secrets.BACKEND_BUCKET_NAME }}
+          S3_INDEX_KEY: ${{ secrets.S3_INDEX_KEY }}
+          EMBEDDING_MODEL_ID: ${{ secrets.EMBEDDING_MODEL_ID }}
+          BEDROCK_REGION: ${{ secrets.AWS_REGION }}
+          CHUNK_SIZE: ${{ secrets.CHUNK_SIZE }}
+          CHUNK_OVERLAP: ${{ secrets.CHUNK_OVERLAP }}
+        run: python build_index.py
+        working-directory: backend/scripts/
