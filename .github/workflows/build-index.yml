@@ -19,16 +19,18 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Cache Python packages
+      - name: Cache Python packages in venv   # Caches the python packages as venv
         id: cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/pip
+          path: backend/scripts/.venv
           key: scripts-deps-${{ hashFiles('backend/scripts/requirements.txt') }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: pip install -r requirements.txt
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
         working-directory: backend/scripts
 
       - name: Configure AWS Credentials
@@ -47,5 +49,5 @@ jobs:
           BEDROCK_REGION: ${{ secrets.AWS_REGION }}
           CHUNK_SIZE: ${{ secrets.CHUNK_SIZE }}
           CHUNK_OVERLAP: ${{ secrets.CHUNK_OVERLAP }}
-        run: python build_index.py
+        run: .venv/bin/python build_index.py    # use venv's Python and not system's
         working-directory: backend/scripts
