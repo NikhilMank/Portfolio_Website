@@ -21,7 +21,7 @@ This project showcases a full-stack portfolio application combining a responsive
 ### AI Chatbot
 - **RAG-Powered Q&A**: Answers questions based on indexed personal data
 - **Real-time Interaction**: Instant responses via AWS Lambda
-- **Contextual Responses**: Retrieves relevant information from resume, bio, and project details
+- **Contextual Responses**: Retrieves relevant information from resume, bio, project details, experience, and skills; including soft skills (Not shown in Frontend)
 - **Professional Persona**: Responds as if personally familiar with the portfolio owner
 
 ## Tech Stack
@@ -72,7 +72,7 @@ Portfolio_with_RAG/
 ├── backend/lambda/         # AWS Lambda function
 │   ├── handler.py          # RAG logic and API handler
 │   └── requirements.txt    # Python dependencies for handler
-├── backen/scripts/         # Utility scripts
+├── backend/scripts/        # Utility scripts
 │   ├── build_index.py      # FAISS index creation
 │   ├── test_rag.py         # Test RAG locally
 ├── data/MyData/            # Personal portfolio content (Markdown)
@@ -142,24 +142,43 @@ python scripts/test_rag.py
 
 ### Deployment
 
+#### Automatic (CI/CD via GitHub Actions)
+
+Three separate workflows handle deployments automatically on push to `main`:
+
+| Workflow | Trigger Path | Action |
+|---|---|---|
+| `deploy-frontend.yml` | `frontend/**` | Builds React app, syncs to S3, invalidates CloudFront cache |
+| `deploy-backend.yml` | `backend/lambda/**` | Packages Lambda, uploads zip to S3, updates Lambda function |
+| `build-index.yml` | `data/MyData/**` | Rebuilds FAISS index from Markdown files, uploads to S3 |
+
+Required GitHub secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `FRONTEND_BUCKET_NAME`, `BACKEND_BUCKET_NAME`, `LAMBDA_FUNCTION_NAME`, `CLOUDFRONT_DISTRIBUTION_ID`, `VITE_API_URL`, `DATA_FOLDER`, `S3_INDEX_KEY`, `EMBEDDING_MODEL_ID`, `CHUNK_SIZE`, `CHUNK_OVERLAP`.
+
+#### Manual
+
 1. **Build and Upload Index**:
    ```bash
-   python scripts/build_index.py
-   # Upload generated index files to S3
-   aws s3 cp faiss_index/ s3://your-bucket/faiss/ --recursive
+   cd backend/scripts
+   python build_index.py
    ```
 
 2. **Deploy Lambda Function**:
-   - Package the `backend/lambda/` directory
-   - Deploy to AWS Lambda with environment variables
-   - Configure API Gateway trigger
+   ```bash
+   cd backend/lambda
+   pip install -r requirements.txt -t package/
+   cp handler.py package/
+   cd package && zip -r ../lambda_package.zip .
+   aws s3 cp ../lambda_package.zip s3://your-bucket/lambda/lambda_package.zip
+   aws lambda update-function-code --function-name your-function --s3-bucket your-bucket --s3-key lambda/lambda_package.zip
+   ```
 
 3. **Deploy Frontend**:
-   - Build the frontend: `npm run build`
-   - Deploy `dist/` folder to static hosting (Vercel, Netlify, S3)
-
-4. **Configure CORS**:
-   - Ensure API Gateway allows requests from your frontend domain
+   ```bash
+   cd frontend
+   npm run build
+   aws s3 sync dist/ s3://your-bucket --delete
+   aws cloudfront create-invalidation --distribution-id YOUR_ID --paths "/*"
+   ```
 
 ## API Reference
 
