@@ -44,7 +44,7 @@ This project demonstrates frontend development, backend APIs, cloud architecture
 
 ## Smart Receipt Scanner
 
-Built a serverless full-stack web application that helps users scan receipts, automatically extract purchase data, categorize expenses, and analyze spending behavior.
+Built a serverless full-stack web application that helps users scan receipts, automatically extract purchase data (using OCR and regular expressions), categorize expenses, and analyze spending behavior.
 
 The project was designed as a practical real-world finance tool and demonstrates cloud-native application development using AWS services.
 
@@ -64,6 +64,7 @@ Users upload a receipt image and the system automatically extracts relevant info
 ### Features
 
 - OCR text extraction from uploaded receipt images
+- Information extraction using Regular Expressions
 - Secure user authentication
 - Multi-user account support
 - Personal dashboard for expense analytics
