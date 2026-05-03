@@ -201,3 +201,4 @@ dist-ssr
 frontend/public/JAF-279.jpg
 .github/workflows/old-deploy.yml
 backend/test_server.py
+docs/session-token-streaming.md
