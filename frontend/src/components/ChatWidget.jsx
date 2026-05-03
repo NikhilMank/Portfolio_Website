@@ -12,7 +12,6 @@ export default function ChatWidget() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [streaming, setStreaming] = useState(false)
   const bottomRef = useRef(null)
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function ChatWidget() {
 
   async function sendMessage() {
     const question = input.trim()
-    if (!question || loading || streaming) return
+    if (!question || loading) return
 
     setMessages(prev => [...prev, { role: 'user', text: question }])
     setInput('')
@@ -35,33 +34,11 @@ export default function ChatWidget() {
     try {
       const res = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question }),
       })
-
-      if (!res.ok) throw new Error('Bad response')
-
-      const rawText = await res.text()
-      let fullText
-      try { fullText = JSON.parse(rawText) } catch { fullText = rawText }
-      setLoading(false)
-      setStreaming(true)
-
-      // Typewriter animation — adds 3 characters per tick at ~60 chars/sec
-      setMessages(prev => [...prev, { role: 'assistant', text: '' }])
-      let i = 0
-      const interval = setInterval(() => {
-        i += 3
-        setMessages(prev => {
-          const msgs = [...prev]
-          msgs[msgs.length - 1] = { ...msgs[msgs.length - 1], text: fullText.slice(0, i) }
-          return msgs
-        })
-        if (i >= fullText.length) {
-          clearInterval(interval)
-          setStreaming(false)
-        }
-      }, 50)
+      const data = await res.json()
+      setMessages(prev => [...prev, { role: 'assistant', text: data.answer }])
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', text: 'Something went wrong. Please try again.' }])
     } finally {
@@ -110,7 +87,7 @@ export default function ChatWidget() {
                 <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-indigo-600 text-white rounded-br-sm'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm whitespace-pre-wrap'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm'
                 }`}>
                   {msg.text}
                 </div>
@@ -138,7 +115,7 @@ export default function ChatWidget() {
             />
             <button
               onClick={sendMessage}
-              disabled={loading || streaming || !input.trim()}
+              disabled={loading || !input.trim()}
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm rounded-lg transition-colors"
             >
               Send

@@ -82,23 +82,37 @@ def load_chain():
     generation_chain = build_generation_chain()
     chain = parallel_chain | generation_chain
 
-
 def lambda_handler(event, context):
     """
-    Invoked via Lambda Function URL. Returns the answer as a plain string —
-    the Function URL uses it directly as the HTTP response body.
-    CORS headers are provided by the Function URL CORS configuration.
+    Lambda entry point. Parses the question from the request body, loads the LCEL
+    chain on cold start, invokes it with the question, and returns the answer.
     """
     try:
         body = json.loads(event.get("body", "{}"))
         question = body.get("question", "").strip()
 
         if not question:
-            return "question is required"
+            return response(400, {"error": "question is required"})
 
         load_chain()
-        return chain.invoke(question)
+        answer = chain.invoke(question)
+
+        return response(200, {"answer": answer})
 
     except Exception as e:
         print(f"Error: {e}")
-        return "Something went wrong, please try again."
+        return response(500, {"error": "Something went wrong, please try again."})
+
+
+def response(status_code: int, body: dict) -> dict:
+    """
+    Builds a consistent API Gateway response with JSON content type and CORS headers.
+    """
+    return {
+        "statusCode": status_code,
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "body": json.dumps(body)
+    }
