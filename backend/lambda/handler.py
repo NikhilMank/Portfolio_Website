@@ -21,6 +21,12 @@ FAISS_TMP_DIR = "/tmp/faiss_index"
 # --- Globals for warm start caching ---
 chain = None
 
+CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+}
+
 
 def format_docs(docs):
     """Concatenates retrieved document chunks into a single context string."""
@@ -87,42 +93,55 @@ def _text_response(status_code, text):
     """Builds a plain-text API Gateway response. The frontend reads it as a single-chunk stream."""
     return {
         "statusCode": status_code,
-        "headers": {
-            "Content-Type": "text/plain; charset=utf-8",
-            "Access-Control-Allow-Origin": "*"
-        },
+        "headers": {**CORS_HEADERS, "Content-Type": "text/plain; charset=utf-8"},
         "body": text
     }
 
 
 try:
-    # Available when invoked via Lambda Function URL with InvokeMode: RESPONSE_STREAM.
-    # Enables true token-by-token streaming via chain.stream().
     import awslambda as _awslambda
 
     @_awslambda.response_handler
     def lambda_handler(event, response_stream, context):
+        method = event.get("requestContext", {}).get("http", {}).get("method", "POST")
+
+        # Handle CORS preflight — Function URL CORS is disabled so we handle it here
+        if method == "OPTIONS":
+            http_stream = _awslambda.HttpResponseStream.from_stream(
+                response_stream, {"statusCode": 200, "headers": CORS_HEADERS}
+            )
+            http_stream.write(b"")
+            return
+
         try:
             body = json.loads(event.get("body", "{}"))
             question = body.get("question", "").strip()
 
             if not question:
-                response_stream.write(b"question is required")
+                http_stream = _awslambda.HttpResponseStream.from_stream(
+                    response_stream, {"statusCode": 400, "headers": CORS_HEADERS}
+                )
+                http_stream.write(b"question is required")
                 return
 
             load_chain()
+            http_stream = _awslambda.HttpResponseStream.from_stream(
+                response_stream,
+                {"statusCode": 200, "headers": {**CORS_HEADERS, "Content-Type": "text/plain; charset=utf-8"}}
+            )
             for chunk in chain.stream(question):
                 if chunk:
-                    response_stream.write(chunk.encode("utf-8"))
+                    http_stream.write(chunk.encode("utf-8"))
 
         except Exception as e:
             print(f"Error: {e}")
-            response_stream.write(b"Something went wrong, please try again.")
+            try:
+                response_stream.write(b"Something went wrong, please try again.")
+            except Exception:
+                pass
 
 except ImportError:
     # Fallback for API Gateway invocation (no streaming support).
-    # Returns the full answer as a plain-text body; the frontend reads it
-    # as a single chunk through the same ReadableStream code path.
     def lambda_handler(event, context):
         try:
             body = json.loads(event.get("body", "{}"))
