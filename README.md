@@ -20,7 +20,7 @@ This project showcases a full-stack portfolio application combining a responsive
 
 ### AI Chatbot
 - **RAG-Powered Q&A**: Answers questions based on indexed personal data
-- **Typewriter Animation**: Answer is revealed character-by-character for a smooth, streaming-like UX
+- **Real-time Interaction**: Instant responses via AWS Lambda
 - **Contextual Responses**: Retrieves relevant information from resume, bio, project details, experience, and skills; including soft skills (Not shown in Frontend)
 - **Professional Persona**: Responds as if personally familiar with the portfolio owner
 
@@ -34,11 +34,11 @@ This project showcases a full-stack portfolio application combining a responsive
 ### Backend
 - **Python 3**: Serverless runtime
 - **AWS Lambda**: Serverless compute platform
-- **Lambda Function URL**: Direct HTTP endpoint (RESPONSE_STREAM mode, replaces API Gateway)
-- **Amazon Bedrock**: Managed AI models (Titan Embeddings, Amazon Nova)
+- **Amazon Bedrock**: Managed AI models (Claude 3 Haiku, Titan Embeddings)
 - **LangChain**: RAG orchestration framework
 - **FAISS**: Vector similarity search
 - **AWS S3**: Index storage
+- **AWS API Gateway**: HTTP API endpoint
 - **AWS CloudFront**: CDN
 
 ### Data Processing
@@ -70,13 +70,11 @@ Portfolio_with_RAG/
 │   ├── src/App.jsx         # Main app with routing
 │   └── package.json        # Frontend dependencies
 ├── backend/lambda/         # AWS Lambda function
-│   ├── handler.py          # RAG logic and Lambda handler
+│   ├── handler.py          # RAG logic and API handler
 │   └── requirements.txt    # Python dependencies for handler
 ├── backend/scripts/        # Utility scripts
 │   ├── build_index.py      # FAISS index creation
 │   ├── test_rag.py         # Test RAG locally
-├── backend/test_server.py  # Local mock server for frontend testing (port 8000)
-├── docs/                   # Session notes and implementation docs
 ├── data/MyData/            # Personal portfolio content (Markdown)
 ├── requirements.txt        # Development dependencies
 └── .env                    # Environment Variables
@@ -109,23 +107,17 @@ pip install -r requirements.txt -t package/
 ### Environment Configuration
 Create a `.env` file based on `.env.example`:
 ```env
-# AWS Configuration (Lambda environment variables)
+# AWS Configuration
 S3_BUCKET=your-s3-bucket-name
 S3_INDEX_KEY=faiss/index
 EMBEDDING_MODEL_ID=amazon.titan-embed-text-v2:0
-LLM_MODEL_ID=amazon.nova-lite-v1:0
-BEDROCK_REGION=eu-central-1
-PORTFOLIO_OWNER=Your Name
+LLM_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
+BEDROCK_REGION=us-east-1
+PORTFOLIO_OWNER=owner-name
 
-# Frontend — set to your Lambda Function URL
-VITE_API_URL=https://your-function-id.lambda-url.region.on.aws/
+# Frontend
+VITE_API_URL=https://your-api-gateway-url.amazonaws.com/prod/chat
 ```
-
-For local frontend development, create `frontend/.env.local` (gitignored) to override `VITE_API_URL`:
-```env
-VITE_API_URL=http://localhost:8000
-```
-Then run `python backend/test_server.py` to start the local mock server.
 
 ## Usage
 
@@ -191,18 +183,20 @@ Required GitHub secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGI
 ## API Reference
 
 ### Chat Endpoint
-**POST** `/` — Lambda Function URL
+**POST** `/chat`
 
-Request body (sent as `Content-Type: text/plain` to avoid CORS preflight):
+Request body:
 ```json
 {
   "question": "What are your main technical skills?"
 }
 ```
 
-Response: a JSON-encoded plain string (parse with `JSON.parse` on the frontend):
-```
-"Nikhil's main technical skills include Python, AWS, and machine learning..."
+Response:
+```json
+{
+  "answer": "Based on my background, my main technical skills include..."
+}
 ```
 
 ## 👨💻 Author
