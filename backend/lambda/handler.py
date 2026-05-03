@@ -1,7 +1,6 @@
 import os
 import json
 import boto3
-import awslambda
 from langchain_aws import BedrockEmbeddings, ChatBedrock
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
@@ -84,27 +83,58 @@ def load_chain():
     chain = parallel_chain | generation_chain
 
 
-# Requires a Lambda Function URL with InvokeMode: RESPONSE_STREAM
-@awslambda.response_handler
-def lambda_handler(event, response_stream, context):
-    """
-    Streams LLM tokens directly to the client as plain text chunks.
-    The retrieval phase runs first (non-streaming), then tokens are
-    written to response_stream as the LLM generates them.
-    """
-    try:
-        body = json.loads(event.get("body", "{}"))
-        question = body.get("question", "").strip()
+def _text_response(status_code, text):
+    """Builds a plain-text API Gateway response. The frontend reads it as a single-chunk stream."""
+    return {
+        "statusCode": status_code,
+        "headers": {
+            "Content-Type": "text/plain; charset=utf-8",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "body": text
+    }
 
-        if not question:
-            response_stream.write(json.dumps({"error": "question is required"}).encode())
-            return
 
-        load_chain()
-        for chunk in chain.stream(question):
-            if chunk:
-                response_stream.write(chunk.encode("utf-8"))
+try:
+    # Available when invoked via Lambda Function URL with InvokeMode: RESPONSE_STREAM.
+    # Enables true token-by-token streaming via chain.stream().
+    import awslambda as _awslambda
 
-    except Exception as e:
-        print(f"Error: {e}")
-        response_stream.write(json.dumps({"error": "Something went wrong, please try again."}).encode())
+    @_awslambda.response_handler
+    def lambda_handler(event, response_stream, context):
+        try:
+            body = json.loads(event.get("body", "{}"))
+            question = body.get("question", "").strip()
+
+            if not question:
+                response_stream.write(b"question is required")
+                return
+
+            load_chain()
+            for chunk in chain.stream(question):
+                if chunk:
+                    response_stream.write(chunk.encode("utf-8"))
+
+        except Exception as e:
+            print(f"Error: {e}")
+            response_stream.write(b"Something went wrong, please try again.")
+
+except ImportError:
+    # Fallback for API Gateway invocation (no streaming support).
+    # Returns the full answer as a plain-text body; the frontend reads it
+    # as a single chunk through the same ReadableStream code path.
+    def lambda_handler(event, context):
+        try:
+            body = json.loads(event.get("body", "{}"))
+            question = body.get("question", "").strip()
+
+            if not question:
+                return _text_response(400, "question is required")
+
+            load_chain()
+            answer = chain.invoke(question)
+            return _text_response(200, answer)
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return _text_response(500, "Something went wrong, please try again.")
