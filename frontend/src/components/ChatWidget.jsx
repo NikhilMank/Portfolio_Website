@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 
 const API_URL = import.meta.env.VITE_API_URL
 
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false)
   const [maximized, setMaximized] = useState(false)
