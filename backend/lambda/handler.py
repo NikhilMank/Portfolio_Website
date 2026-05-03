@@ -21,11 +21,6 @@ FAISS_TMP_DIR = "/tmp/faiss_index"
 # --- Globals for warm start caching ---
 chain = None
 
-CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-}
 
 
 def format_docs(docs):
@@ -93,7 +88,7 @@ def _text_response(status_code, text):
     """Builds a plain-text API Gateway response. The frontend reads it as a single-chunk stream."""
     return {
         "statusCode": status_code,
-        "headers": {**CORS_HEADERS, "Content-Type": "text/plain; charset=utf-8"},
+        "headers": {"Content-Type": "text/plain; charset=utf-8", "Access-Control-Allow-Origin": "*"},
         "body": text
     }
 
@@ -105,12 +100,10 @@ try:
     def lambda_handler(event, response_stream, context):
         method = event.get("requestContext", {}).get("http", {}).get("method", "POST")
 
-        # Handle CORS preflight — Function URL CORS is disabled so we handle it here
+        # OPTIONS preflight: write nothing and return.
+        # awslambda.response_handler adds Access-Control-Allow-Origin: * by default.
         if method == "OPTIONS":
-            http_stream = _awslambda.HttpResponseStream.from_stream(
-                response_stream, {"statusCode": 200, "headers": CORS_HEADERS}
-            )
-            http_stream.write(b"")
+            response_stream.write(b"")
             return
 
         try:
@@ -118,27 +111,17 @@ try:
             question = body.get("question", "").strip()
 
             if not question:
-                http_stream = _awslambda.HttpResponseStream.from_stream(
-                    response_stream, {"statusCode": 400, "headers": CORS_HEADERS}
-                )
-                http_stream.write(b"question is required")
+                response_stream.write(b"question is required")
                 return
 
             load_chain()
-            http_stream = _awslambda.HttpResponseStream.from_stream(
-                response_stream,
-                {"statusCode": 200, "headers": {**CORS_HEADERS, "Content-Type": "text/plain; charset=utf-8"}}
-            )
             for chunk in chain.stream(question):
                 if chunk:
-                    http_stream.write(chunk.encode("utf-8"))
+                    response_stream.write(chunk.encode("utf-8"))
 
         except Exception as e:
             print(f"Error: {e}")
-            try:
-                response_stream.write(b"Something went wrong, please try again.")
-            except Exception:
-                pass
+            response_stream.write(b"Something went wrong, please try again.")
 
 except ImportError:
     # Fallback for API Gateway invocation (no streaming support).
