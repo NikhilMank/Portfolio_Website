@@ -200,3 +200,4 @@ dist-ssr
 *.sw?
 frontend/public/JAF-279.jpg
 .github/workflows/old-deploy.yml
+backend/test_server.py

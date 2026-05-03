@@ -12,6 +12,7 @@ export default function ChatWidget() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [streaming, setStreaming] = useState(false)
   const bottomRef = useRef(null)
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function ChatWidget() {
 
   async function sendMessage() {
     const question = input.trim()
-    if (!question || loading) return
+    if (!question || loading || streaming) return
 
     setMessages(prev => [...prev, { role: 'user', text: question }])
     setInput('')
@@ -37,12 +38,40 @@ export default function ChatWidget() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question }),
       })
-      const data = await res.json()
-      setMessages(prev => [...prev, { role: 'assistant', text: data.answer }])
+
+      if (!res.ok || !res.body) throw new Error('Bad response')
+
+      // Add empty assistant message and switch from "Thinking..." to streaming mode
+      setMessages(prev => [...prev, { role: 'assistant', text: '' }])
+      setLoading(false)
+      setStreaming(true)
+
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        const chunk = decoder.decode(value, { stream: true })
+        setMessages(prev => {
+          const msgs = [...prev]
+          msgs[msgs.length - 1] = { ...msgs[msgs.length - 1], text: msgs[msgs.length - 1].text + chunk }
+          return msgs
+        })
+      }
     } catch {
-      setMessages(prev => [...prev, { role: 'assistant', text: 'Something went wrong. Please try again.' }])
+      setMessages(prev => {
+        const msgs = [...prev]
+        const last = msgs[msgs.length - 1]
+        if (last?.role === 'assistant' && last.text === '') {
+          msgs[msgs.length - 1] = { role: 'assistant', text: 'Something went wrong. Please try again.' }
+          return msgs
+        }
+        return [...msgs, { role: 'assistant', text: 'Something went wrong. Please try again.' }]
+      })
     } finally {
       setLoading(false)
+      setStreaming(false)
     }
   }
 
@@ -115,7 +144,7 @@ export default function ChatWidget() {
             />
             <button
               onClick={sendMessage}
-              disabled={loading || !input.trim()}
+              disabled={loading || streaming || !input.trim()}
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm rounded-lg transition-colors"
             >
               Send

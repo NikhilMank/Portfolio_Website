@@ -1,6 +1,7 @@
 import os
 import json
 import boto3
+import awslambda
 from langchain_aws import BedrockEmbeddings, ChatBedrock
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
@@ -82,37 +83,28 @@ def load_chain():
     generation_chain = build_generation_chain()
     chain = parallel_chain | generation_chain
 
-def lambda_handler(event, context):
+
+# Requires a Lambda Function URL with InvokeMode: RESPONSE_STREAM
+@awslambda.response_handler
+def lambda_handler(event, response_stream, context):
     """
-    Lambda entry point. Parses the question from the request body, loads the LCEL
-    chain on cold start, invokes it with the question, and returns the answer.
+    Streams LLM tokens directly to the client as plain text chunks.
+    The retrieval phase runs first (non-streaming), then tokens are
+    written to response_stream as the LLM generates them.
     """
     try:
         body = json.loads(event.get("body", "{}"))
         question = body.get("question", "").strip()
 
         if not question:
-            return response(400, {"error": "question is required"})
+            response_stream.write(json.dumps({"error": "question is required"}).encode())
+            return
 
         load_chain()
-        answer = chain.invoke(question)
-
-        return response(200, {"answer": answer})
+        for chunk in chain.stream(question):
+            if chunk:
+                response_stream.write(chunk.encode("utf-8"))
 
     except Exception as e:
         print(f"Error: {e}")
-        return response(500, {"error": "Something went wrong, please try again."})
-
-
-def response(status_code: int, body: dict) -> dict:
-    """
-    Builds a consistent API Gateway response with JSON content type and CORS headers.
-    """
-    return {
-        "statusCode": status_code,
-        "headers": {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-        },
-        "body": json.dumps(body)
-    }
+        response_stream.write(json.dumps({"error": "Something went wrong, please try again."}).encode())
