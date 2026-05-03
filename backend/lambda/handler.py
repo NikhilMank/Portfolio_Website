@@ -22,7 +22,6 @@ FAISS_TMP_DIR = "/tmp/faiss_index"
 chain = None
 
 
-
 def format_docs(docs):
     """Concatenates retrieved document chunks into a single context string."""
     return "\n\n".join(doc.page_content for doc in docs)
@@ -84,59 +83,22 @@ def load_chain():
     chain = parallel_chain | generation_chain
 
 
-def _text_response(status_code, text):
-    """Builds a plain-text API Gateway response. The frontend reads it as a single-chunk stream."""
-    return {
-        "statusCode": status_code,
-        "headers": {"Content-Type": "text/plain; charset=utf-8", "Access-Control-Allow-Origin": "*"},
-        "body": text
-    }
+def lambda_handler(event, context):
+    """
+    Invoked via Lambda Function URL. Returns the answer as a plain string —
+    the Function URL uses it directly as the HTTP response body.
+    CORS headers are provided by the Function URL CORS configuration.
+    """
+    try:
+        body = json.loads(event.get("body", "{}"))
+        question = body.get("question", "").strip()
 
+        if not question:
+            return "question is required"
 
-try:
-    import awslambda as _awslambda
+        load_chain()
+        return chain.invoke(question)
 
-    @_awslambda.response_handler
-    def lambda_handler(event, response_stream, context):
-        method = event.get("requestContext", {}).get("http", {}).get("method", "POST")
-
-        # OPTIONS preflight: write nothing and return.
-        # awslambda.response_handler adds Access-Control-Allow-Origin: * by default.
-        if method == "OPTIONS":
-            response_stream.write(b"")
-            return
-
-        try:
-            body = json.loads(event.get("body", "{}"))
-            question = body.get("question", "").strip()
-
-            if not question:
-                response_stream.write(b"question is required")
-                return
-
-            load_chain()
-            for chunk in chain.stream(question):
-                if chunk:
-                    response_stream.write(chunk.encode("utf-8"))
-
-        except Exception as e:
-            print(f"Error: {e}")
-            response_stream.write(b"Something went wrong, please try again.")
-
-except ImportError:
-    # Fallback for API Gateway invocation (no streaming support).
-    def lambda_handler(event, context):
-        try:
-            body = json.loads(event.get("body", "{}"))
-            question = body.get("question", "").strip()
-
-            if not question:
-                return _text_response(400, "question is required")
-
-            load_chain()
-            answer = chain.invoke(question)
-            return _text_response(200, answer)
-
-        except Exception as e:
-            print(f"Error: {e}")
-            return _text_response(500, "Something went wrong, please try again.")
+    except Exception as e:
+        print(f"Error: {e}")
+        return "Something went wrong, please try again."

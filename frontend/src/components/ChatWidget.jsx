@@ -39,39 +39,31 @@ export default function ChatWidget() {
         body: JSON.stringify({ question }),
       })
 
-      if (!res.ok || !res.body) throw new Error('Bad response')
+      if (!res.ok) throw new Error('Bad response')
 
-      // Add empty assistant message and switch from "Thinking..." to streaming mode
-      setMessages(prev => [...prev, { role: 'assistant', text: '' }])
+      const fullText = await res.text()
       setLoading(false)
       setStreaming(true)
 
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value, { stream: true })
+      // Typewriter animation — adds 3 characters per tick at ~60 chars/sec
+      setMessages(prev => [...prev, { role: 'assistant', text: '' }])
+      let i = 0
+      const interval = setInterval(() => {
+        i += 3
         setMessages(prev => {
           const msgs = [...prev]
-          msgs[msgs.length - 1] = { ...msgs[msgs.length - 1], text: msgs[msgs.length - 1].text + chunk }
+          msgs[msgs.length - 1] = { ...msgs[msgs.length - 1], text: fullText.slice(0, i) }
           return msgs
         })
-      }
-    } catch {
-      setMessages(prev => {
-        const msgs = [...prev]
-        const last = msgs[msgs.length - 1]
-        if (last?.role === 'assistant' && last.text === '') {
-          msgs[msgs.length - 1] = { role: 'assistant', text: 'Something went wrong. Please try again.' }
-          return msgs
+        if (i >= fullText.length) {
+          clearInterval(interval)
+          setStreaming(false)
         }
-        return [...msgs, { role: 'assistant', text: 'Something went wrong. Please try again.' }]
-      })
+      }, 50)
+    } catch {
+      setMessages(prev => [...prev, { role: 'assistant', text: 'Something went wrong. Please try again.' }])
     } finally {
       setLoading(false)
-      setStreaming(false)
     }
   }
 
