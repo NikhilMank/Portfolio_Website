@@ -14,7 +14,7 @@ const education = [
     institution: 'Universität Siegen',
     location: 'Siegen, Germany',
     period: '10/2020 – 03/2024',
-    grade: '1.8 / 4.0',
+    grade: '1.8 / 5.0',
     points: [
       { text: 'Subjects: Software Engineering (C++, Python, SQL), Deep Learning, Unsupervised Deep Learning, Computer Vision, Artificial Intelligence, Automation and Industrial Communication, Project Management' },
       { text: 'Thesis: Pixel-wise Out-of-Distribution Detection in Semantic Segmentation for Aerial Imagery using Normalising Flow Networks for Negative Feature Synthesis', link: 'https://drive.google.com/file/d/1Pvpd0K53zPxAYuQTinDliMU-Ra0GgBmY/view?usp=drive_link' },
