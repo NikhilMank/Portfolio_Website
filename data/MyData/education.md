@@ -73,6 +73,7 @@ Validated foundational AWS cloud knowledge covering:
 
 # Languages
 
-- English – Fluent
-- German – Advanced
-- Telugu – Native
+- English – Fluent (C1/C2)
+- German – Advanced (B1/B2)
+- Telugu – Native (Mother Tongue)
+- Hindi - Fluent (C1/C2)

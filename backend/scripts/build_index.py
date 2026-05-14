@@ -2,8 +2,8 @@ import os
 import boto3
 from pathlib import Path
 from dotenv import load_dotenv
-from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_aws import BedrockEmbeddings
 from langchain_community.vectorstores import FAISS
 
@@ -14,19 +14,31 @@ S3_BUCKET = os.getenv("S3_BUCKET")
 S3_INDEX_KEY = os.getenv("S3_INDEX_KEY")
 EMBEDDING_MODEL_ID = os.getenv("EMBEDDING_MODEL_ID")
 AWS_REGION = os.getenv("BEDROCK_REGION")
-CHUNK_SIZE = int(os.getenv("CHUNK_SIZE"))
-CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP"))
 
 
 def main():
-    # Load all .md files
-    loader = DirectoryLoader(DATA_DIR, glob="*.md", loader_cls=UnstructuredMarkdownLoader)
+    # Load all .md files - using TextLoader to preserve markdown headers
+    loader = DirectoryLoader(DATA_DIR, glob="*.md", loader_cls=TextLoader)
     docs = loader.load()
     print(f"Loaded {len(docs)} documents")
 
-    # Chunk documents
-    splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
-    chunks = splitter.split_documents(docs)
+    # Split documents by markdown headers (both ## and ###)
+    # This keeps each job, project, or subsection as a single chunk
+    header_splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on=[
+            ("##", "section"),
+            ("###", "subsection"),
+        ]
+    )
+
+    chunks = []
+    for doc in docs:
+        doc_chunks = header_splitter.split_text(doc.page_content)
+        # Preserve source metadata
+        for chunk in doc_chunks:
+            chunk.metadata["source"] = Path(doc.metadata.get("source", "unknown")).name
+        chunks.extend(doc_chunks)
+
     print(f"Total chunks: {len(chunks)}")
 
     # Generate embeddings and build FAISS index
