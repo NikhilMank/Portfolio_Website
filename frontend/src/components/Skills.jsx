@@ -8,12 +8,16 @@ const skillGroups = [
     skills: ['PyTorch', 'TensorFlow', 'HuggingFace', 'Scikit-learn', 'OpenCV', 'NumPy', 'Pandas', 'Matplotlib', 'Seaborn', 'TensorBoard', 'Weights & Biases', 'MLflow'],
   },
   {
+    category: 'Computer Vision',
+    skills: ['Object Detection', 'Semantic Segmentation', 'Anomaly Detection', 'Out-of-Distribution Detection', 'Adversarial Robustness', 'Uncertainty Estimation', 'Aerial Perception', 'Image Processing', 'AutoEncoders', 'Flow Networks'],
+  },
+  {
     category: 'LLM / GenAI',
-    skills: ['NLP', 'LLMs', 'Prompt Engineering', 'Transformers', 'LLM Fine-tuning', 'Model Serving', 'OpenAPI'],
+    skills: ['NLP', 'LLMs', 'Prompt Engineering', 'Transformers', 'LLM Fine-tuning', 'Model Serving', 'Claude API', 'Claude Code', 'Whisper', 'Ollama', 'Codex', 'Copilot'],
   },
   {
     category: 'RAG & Agentic AI',
-    skills: ['LangChain', 'LangGraph', 'Amazon Bedrock Agentcore', 'Azure AI Foundry', 'FastMCP', 'FastAPI', 'Streamlit'],
+    skills: ['LangChain', 'LangGraph', 'LangSmith', 'Amazon Bedrock Agentcore', 'Azure AI Foundry', 'FastMCP', 'FastAPI', 'Streamlit', 'RAGAS'],
   },
   {
     category: 'Databases & Retrieval',
@@ -21,7 +25,15 @@ const skillGroups = [
   },
   {
     category: 'Cloud & Deployment',
-    skills: ['AWS', 'Azure', 'Docker', 'Kubernetes', 'Grafana', 'Prometheus', 'Terraform (IaC)', 'CloudFormation (IaC)', 'GitHub', 'GitHub Actions', 'GitLab'],
+    skills: ['AWS', 'Azure', 'Docker', 'Kubernetes', 'Terraform (IaC)', 'CloudFormation (IaC)', 'GitHub Actions', 'GitLab', 'CI/CD Pipelines', 'Linux'],
+  },
+  {
+    category: 'Backend Engineering',
+    skills: ['REST APIs', 'FastAPI', 'Microservices', 'Serverless Architectures', 'Containerized Services'],
+  },
+  {
+    category: 'Monitoring & Observability',
+    skills: ['CloudWatch', 'Grafana', 'Prometheus'],
   },
   {
     category: 'Frontend',
