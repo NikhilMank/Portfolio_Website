@@ -56,6 +56,8 @@
 - Copilot
 - Whisper
 - Ollama
+- OpenCode
+- OpenRouter
 
 ## RAG / Agentic AI
 
