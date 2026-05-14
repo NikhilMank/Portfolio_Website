@@ -1,13 +1,13 @@
 const projects = [
   {
     title: 'Audio Transcriber MCP Server',
-    description: 'Local-first MCP server for high-performance audio transcription with speaker diarization. Runs entirely on-device with GPU acceleration — no cloud APIs required.',
+    description: 'Local-first MCP server for high-performance audio transcription with speaker diarization. Runs entirely on-device with GPU acceleration, no cloud APIs required.',
     tags: ['Python', 'FastMCP', 'faster-whisper', 'pyannote.audio', 'PyTorch', 'CUDA', 'FFmpeg'],
     github: 'https://github.com/NikhilMank/Audio_Transcriber_MCP_Server',
   },
   {
     title: 'Expense Tracker MCP Server',
-    description: 'Remotely hosted MCP server that lets AI assistants manage expenses, track budgets, and generate AI-powered financial reports via structured tool calling.',
+    description: 'Remotely hosted MCP server deployed on fastmcp.cloud that lets AI assistants manage expenses, track budgets, and generate AI-powered financial reports via structured tool calling.',
     tags: ['Python', 'FastMCP', 'SQLite', 'aiosqlite', 'asyncio', 'MCP'],
     github: 'https://github.com/NikhilMank/Expense_Tracker_MCP_Server',
   },
