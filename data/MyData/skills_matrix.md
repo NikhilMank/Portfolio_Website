@@ -61,6 +61,7 @@
 
 - LangChain
 - LangGraph
+- LangSmith
 - Amazon Bedrock Agentcore
 - Azure AI Foundry
 - FastMCP
