@@ -25,6 +25,20 @@
 - Weights & Biases
 - MLflow
 
+## Computer Vision
+- Object Detection
+- Segmentation
+    - Semantic Segmentation
+    - Panoptic Segmentation
+- Anomaly Detection
+- Out of Distribution Detection
+- Adversarial Robustness, Adversarial Attacks
+- Uncertainty Estimation
+- Aerial Perception
+- Image Processing
+- AutoEncoders
+- Flow Networks
+
 ## LLM / Generative AI
 
 - NLP
@@ -37,6 +51,11 @@
 - Claude API
 - LLM APIs
 - HuggingFace
+- Claude Code
+- Codex
+- Copilot
+- Whisper
+- Ollama
 
 ## RAG / Agentic AI
 

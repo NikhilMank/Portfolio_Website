@@ -2,6 +2,171 @@
 
 # Projects
 
+## Audio Transcriber MCP Server
+
+Built a local-first MCP (Model Context Protocol) server for high-performance audio transcription and speaker-aware speech processing using faster-whisper and pyannote.audio.
+
+The system enables AI assistants and MCP-compatible clients to transcribe audio files locally without sending data to external cloud services, improving privacy, offline usability, and performance control.
+
+### Problem Solved
+
+Most speech transcription services rely on external APIs, requiring users to upload potentially sensitive audio data to cloud platforms.
+
+There is also limited interoperability between transcription systems and modern AI agent tooling ecosystems.
+
+### Solution
+
+Developed a local MCP-compatible transcription server that exposes speech-processing capabilities through standardized MCP tool interfaces.
+
+The system supports:
+- plain transcription
+- timestamped transcription
+- speaker diarization
+- batch folder transcription
+
+while running entirely on the user's own machine.
+
+### Features
+
+- Local-first audio transcription
+- Speaker diarization with pyannote.audio
+- Timestamped transcription output
+- Batch transcription for folders
+- Multiple audio format support
+- Lazy model loading for memory optimization
+- GPU acceleration support via CUDA
+- Apple Silicon support via MPS
+- Offline diarization model support
+- MCP-compatible AI tooling integration
+
+### Architecture & Engineering Details
+
+- Implemented lazy initialization for Whisper and diarization pipelines to reduce startup overhead and memory usage
+- Added automatic hardware-aware execution using CPU, CUDA, or Apple MPS backends
+- Used `faster-whisper` for optimized inference performance
+- Integrated FFmpeg-based preprocessing for consistent audio loading and resampling
+- Built speaker assignment logic by aligning transcription timestamps with pyannote diarization segments
+- Added configurable model selection through environment variables
+- Supported fully offline execution after one-time model download
+
+### Technologies
+
+- Python
+- FastMCP
+- faster-whisper
+- pyannote.audio
+- FFmpeg
+- PyTorch
+- NumPy
+- CUDA
+- Apple MPS
+- Hugging Face models
+
+### Skills Demonstrated
+
+- AI infrastructure engineering
+- Local AI systems
+- Speech AI pipelines
+- MCP server development
+- GPU-aware optimization
+- Audio preprocessing
+- Multimodal AI tooling
+- Backend systems engineering
+- Offline-first AI architecture
+
+---
+
+## Expense Tracker MCP Server
+
+Designed and deployed a remotely hosted MCP (Model Context Protocol) expense tracking server that enables AI assistants to manage, analyze, and summarize financial data through structured tool calling and natural language workflows.
+
+The server is deployed using FastMCP’s remote hosting platform directly from GitHub, demonstrating cloud-based AI tooling deployment and production-style MCP infrastructure engineering.
+
+### Problem Solved
+
+Personal finance tracking tools are often disconnected from AI workflows and require users to manually navigate applications, spreadsheets, or dashboards.
+
+Modern AI agents also require secure and structured interfaces for interacting with financial data while maintaining user isolation and validation controls.
+
+### Solution
+
+Built a remotely deployed MCP server that exposes expense management, budgeting, analytics, and financial insight capabilities through reusable MCP tools.
+
+The system allows AI assistants and MCP-compatible clients to:
+- add and manage expenses
+- create category budgets
+- analyze spending trends
+- generate financial summaries
+- produce AI-generated monthly reports
+
+through structured natural language interactions.
+
+### Features
+
+- Remote MCP server deployment
+- Expense CRUD operations
+- Budget tracking and monitoring
+- Spending trend analytics
+- Category-based expense management
+- Recurring expense support
+- Monthly financial insights
+- AI-generated reporting prompts
+- User-isolated financial records
+- Structured JSON resources
+- HTTP-based MCP transport
+
+### Architecture & Engineering Details
+
+- Built asynchronous MCP tools using `asyncio` and `aiosqlite` for efficient non-blocking database operations
+- Designed a multi-user architecture using access-token-based user isolation
+- Implemented SQLite-backed persistence with transactional rollback safety
+- Added validation layers for dates, budgets, and transaction amounts
+- Created analytical SQL aggregation pipelines for:
+  - budget tracking
+  - category summaries
+  - spending trends
+  - transaction statistics
+- Designed reusable MCP prompts that orchestrate multiple tool calls for AI-generated financial reporting
+- Added hierarchical category management using parent-child category relationships
+- Implemented MCP resources for structured category discovery
+- Added conflict-safe budget upsert logic using SQL `ON CONFLICT`
+- Exposed the MCP server over HTTP for remote AI agent integration
+
+### AI Workflow Capabilities
+
+The MCP server supports higher-level AI workflows including:
+- automated monthly financial reports
+- budget health analysis
+- spending trend evaluation
+- personalized expense reduction recommendations
+- category risk assessment
+
+### Technologies
+
+- Python
+- FastMCP
+- MCP (Model Context Protocol)
+- SQLite
+- aiosqlite
+- asyncio
+- JSON resource management
+- HTTP transport APIs
+
+### Skills Demonstrated
+
+- AI agent infrastructure
+- Remote MCP deployment
+- Async backend engineering
+- Financial analytics systems
+- Database schema design
+- Multi-user backend architecture
+- AI tool orchestration
+- Structured prompt engineering
+- Backend API development
+- Production-style Python systems
+
+---
+
 ## AI Portfolio Website with RAG Chatbot
 
 I am building an interactive portfolio website that includes a Retrieval-Augmented Generation (RAG) chatbot. The goal of this project is to replace the traditional static resume experience with a conversational interface where recruiters, hiring managers, or collaborators can ask questions about my background, projects, and technical skills.

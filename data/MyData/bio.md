@@ -1,4 +1,14 @@
 
+# Contact
+
+Location: Siegen, Germany (Open to Relocation)
+Email: mankalinikhil9@gmail.com
+Phone: +49 17613428740
+LinkedIn: https://www.linkedin.com/in/nikhil-mankali
+GitHub: https://github.com/NikhilMank
+
+---
+
 # Who is Nikhil Mankali?
 
 I am an engineer with a background in Artificial Intelligence, Deep Learning, Computer Vision, Cloud Computing, and Software Engineering. My main interests are building practical AI systems that can be deployed in real environments, working with multi-modal approaches, building research prototypes.
