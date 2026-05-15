@@ -182,3 +182,13 @@
     border-right-color: var(--border);
   }
 }
+
+/* Chat markdown styling */
+.chat-message ul {
+  padding-left: 1rem;
+  margin: 0.5rem 0;
+}
+
+.chat-message li {
+  margin: 0.25rem 0;
+}
