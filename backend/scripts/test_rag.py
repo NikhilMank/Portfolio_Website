@@ -110,15 +110,13 @@ def generate_answer(context, question):
     """Generate answer using prompt and LLM."""
     prompt = PromptTemplate(
         template=(
-            "You are an AI assistant representing {owner} on his portfolio website.\n"
-            "Use ALL the context provided below to answer the question comprehensively.\n"
-            "Do not summarize - include all relevant details from the context.\n"
-            "Do not mention context, documents, or retrieved information.\n"
-            "If the information is unavailable, say you do not have that information.\n"
-            "Avoid making assumptions or inventing details.\n\n"
-
-            "Context:\n{context}\n\n"
-
+            "You are {owner}'s assistant, answering questions about him on his behalf.\n"
+            "Talk about him in third person, like you're describing him to someone else.\n"
+            "Keep it conversational — like you're explaining to a friend.\n"
+            "Don't say phrases like 'Based on the information provided, From the context provided, etc', when you use phrases like this it makes the answer unnatural, if there is a situation where you have to say something like that say something like 'According to my knowledge','What I know of him', etc"
+            "Use short bullet points for lists when required, you need not try to say everything like lists.\n"
+            "If you don't know something, say so directly.\n\n"
+            "Context: {context}\n\n"
             "Question: {question}\n"
             "Answer:"
         ),
@@ -141,32 +139,15 @@ def main():
     for question in TEST_QUESTIONS:
         print(f"Q: {question}")
 
-        # Determine relevant content types based on keywords
         relevant_types = get_relevant_content_types(question)
-        print(f"  Relevant content types: {relevant_types}")
-
-        # Pre-filter approach: get all docs, filter by content type first, then similarity
         if relevant_types != set(CONTENT_TYPE_KEYWORDS.keys()):
-            # Use pre-filtering - get all matching content type docs, then sort by similarity
             filtered_docs = similarity_search_with_filter(index, question, relevant_types, k=TOP_K)
-            print(f"  Retrieved {len(filtered_docs)} {relevant_types} chunks")
         else:
-            # No specific content type - use regular similarity search
             docs = index.similarity_search(question, k=TOP_K)
             filtered_docs = docs
-            print(f"  Retrieved {len(docs)} chunks (no content type filter)")
 
-        # Show metadata
-        sources = [d.metadata.get("source", "unknown") for d in filtered_docs]
-        content_types = [d.metadata.get("content_type", "unknown") for d in filtered_docs]
-        print(f"  Sources: {set(sources)}")
-        print(f"  Content types: {set(content_types)}")
-
-        # Format context
         context = format_docs(filtered_docs)
-        print(f"Context: {context}")
 
-        # Generate answer
         try:
             answer = generate_answer(context, question).invoke({"context": context, "question": question})
             print(f"A: {answer}")

@@ -77,12 +77,13 @@ def build_generation_chain():
     )
     prompt = PromptTemplate(
         template=(
-            "You are an AI assistant representing {owner} on his portfolio website.\n"
-            "Answer questions about {owner} in a natural, confident, and professional tone — as if you know him well.\n"
-            "Do not say phrases like 'based on the context provided' or 'according to the context'.\n"
-            "Just answer directly and naturally.\n"
-            "If the answer is not in the context, say \"I don't have that information, but feel free to reach out to {owner} directly.\"\n\n"
-            "Context:\n{context}\n\n"
+            "You are {owner}'s assistant, answering questions about him on his behalf.\n"
+            "Talk about him in third person, like you're describing him to someone else.\n"
+            "Keep it conversational — like you're explaining to a friend.\n"
+            "Don't say phrases like 'Based on the information provided, From the context provided, etc', when you use phrases like this it makes the answer unnatural, if there is a situation where you have to say something like that say something like 'To the best of my knowledge','What I know of him', etc"
+            "Use short bullet points for lists when required, you need not try to say everything like lists.\n"
+            "If you don't know something, say so directly.\n\n"
+            "Context: {context}\n\n"
             "Question: {question}\n"
             "Answer:"
         ),
@@ -141,25 +142,7 @@ def lambda_handler(event, context):
 
         # Format context and generate answer
         context = format_docs(docs)
-        llm = ChatBedrock(
-            model_id=LLM_MODEL_ID,
-            client=boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
-        )
-        prompt = PromptTemplate(
-            template=(
-                "You are an AI assistant representing {owner} on his portfolio website.\n"
-                "Answer questions about {owner} in a natural, confident, and professional tone — as if you know him well.\n"
-                "Do not say phrases like 'based on the context provided' or 'according to the context'.\n"
-                "Just answer directly and naturally.\n"
-                "If the answer is not in the context, say \"I don't have that information, but feel free to reach out to {owner} directly.\"\n\n"
-                "Context:\n{context}\n\n"
-                "Question: {question}\n"
-                "Answer:"
-            ),
-            input_variables=["context", "question"],
-            partial_variables={"owner": PORTFOLIO_OWNER}
-        )
-        chain = prompt | llm | StrOutputParser()
+        chain = build_generation_chain()
         answer = chain.invoke({"context": context, "question": question})
 
         return response(200, {"answer": answer})
