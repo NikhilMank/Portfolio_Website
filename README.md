@@ -20,6 +20,7 @@ This project showcases a full-stack portfolio application combining a responsive
 
 ### AI Chatbot
 - **RAG-Powered Q&A**: Answers questions based on indexed personal data
+- **Smart Retrieval**: Uses content-type filtering to ensure relevant chunks are retrieved (e.g., education queries get education chunks)
 - **Real-time Interaction**: Instant responses via AWS Lambda
 - **Contextual Responses**: Retrieves relevant information from resume, bio, project details, experience, and skills; including soft skills (Not shown in Frontend)
 - **Professional Persona**: Responds as if personally familiar with the portfolio owner
@@ -51,16 +52,67 @@ This project showcases a full-stack portfolio application combining a responsive
 
 1. **Indexing Phase**:
    - Markdown files from `data/MyData/` are loaded and parsed
-   - Documents are split into semantic chunks (500 chars, 100 overlap)
+   - Documents are split by markdown headers (`##`) into semantic chunks, preserving structure
+   - Each chunk is tagged with metadata (source file, content type: bio/education/experience/project/skill/soft_skill)
    - Text chunks are converted to embeddings using Amazon Titan
    - FAISS index is built and stored in AWS S3
 
 2. **Query Processing**:
    - User question → Lambda function
-   - Question embedded and searched against FAISS index
-   - Top-K relevant chunks retrieved (default: 5)
+   - Question analyzed to identify relevant content types (keyword matching)
+   - Relevant chunks retrieved via similarity search with content-type filtering
+   - Top-K relevant chunks retrieved (configurable, default: 5)
    - Context + question fed to Claude 3 Haiku for generation
    - Personalized response returned
+
+## RAG Implementation Details
+
+### Content Type Tagging
+
+Each chunk in the knowledge base is tagged with a `content_type` metadata field based on the source file:
+
+| Source File | Content Type | Description |
+|-------------|--------------|-------------|
+| `bio.md` | `bio` | Personal info, contact, introduction |
+| `education.md` | `education` | Academic background, degrees, certifications |
+| `experience.md` | `experience` | Work history, positions, responsibilities |
+| `projects.md` | `project` | Portfolio projects, proof of concepts |
+| `skills_matrix.md` | `skill` | Technical skills, programming languages, tools |
+| `soft_skills.md` | `soft_skill` | Soft skills, personality traits |
+
+### Chunking Strategy
+
+Documents are split using `MarkdownHeaderTextSplitter` with only `##` headers (main section level). This ensures:
+- Each degree in education.md becomes its own chunk (AWS Bootcamp, M.Sc., B.Tech.)
+- Each job position in experience.md becomes its own chunk
+- All related information stays together (grade, subjects, thesis for M.Sc.)
+
+### Retrieval Strategy
+
+The system uses **pre-filtering** for content-type aware retrieval:
+
+1. **Keyword Analysis**: The query is analyzed to identify relevant content types using predefined keywords:
+   - "education", "degree", "university" → `education`
+   - "experience", "work", "job" → `experience`
+   - "skills", "programming", "language" → `skill`
+
+2. **Pre-filtering**: All chunks are first filtered by content type, then sorted by embedding similarity
+
+3. **Fallback**: If no content type keywords match, all chunks are retrieved using standard similarity search
+
+This approach ensures that queries like "What is his educational background?" retrieve education chunks regardless of embedding scores, solving the issue where relevant content had lower similarity than irrelevant content.
+
+### Data Organization
+
+The `data/MyData/` folder contains structured markdown files:
+- **`bio.md`**: Personal introduction, contact info, languages spoken
+- **`education.md`**: Degrees, certifications, academic achievements
+- **`experience.md`**: Work experience and positions
+- **`projects.md`**: Portfolio projects and POC work
+- **`skills_matrix.md`**: Technical skills and certifications
+- **`soft_skills.md`**: Soft skills and personality traits
+
+Each file focuses on one content type to enable accurate tagging during indexing.
 
 ### Project Structure
 ```
