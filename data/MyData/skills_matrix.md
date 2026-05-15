@@ -79,6 +79,10 @@
 - ChromaDB
 - Azure AI Search
 
+## Certifications
+
+- AWS Certified Cloud Practitioner
+
 ## Cloud Platforms
 
 - AWS

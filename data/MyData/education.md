@@ -24,7 +24,7 @@ Topics covered:
 Siegen, Germany
 **10/2020 – 03/2024**
 
-**Grade:** 1.8 / 4.0
+**Grade:** 1.8 / 5.0
 
 ### Relevant Subjects
 
@@ -55,25 +55,3 @@ Hyderabad, India
 **06/2015 – 05/2019**
 
 **Grade:** 9.63 / 10
-
----
-
-# Certifications
-
-## AWS Certified Cloud Practitioner (CLF-C02)
-
-Validated foundational AWS cloud knowledge covering:
-
-- Core services
-- Security
-- Pricing
-- Architecture principles
-
----
-
-# Languages
-
-- English – Fluent (C1/C2)
-- German – Advanced (B1/B2)
-- Telugu – Native (Mother Tongue)
-- Hindi - Fluent (C1/C2)
