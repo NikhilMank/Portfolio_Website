@@ -203,3 +203,6 @@ frontend/public/JAF-279.jpg
 backend/test_server.py
 docs/session-token-streaming.md
 backend/scripts/test_chunking.py
+backend/scripts/build_index_local.py
+data/faiss_index/index.pkl
+data/faiss_index/index.faiss

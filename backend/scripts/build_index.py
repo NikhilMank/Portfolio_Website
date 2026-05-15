@@ -16,27 +16,45 @@ EMBEDDING_MODEL_ID = os.getenv("EMBEDDING_MODEL_ID")
 AWS_REGION = os.getenv("BEDROCK_REGION")
 
 
+def get_content_type(filename):
+    """Map filename to content type."""
+    content_type_map = {
+        "bio.md": "bio",
+        "education.md": "education",
+        "experience.md": "experience",
+        "projects.md": "project",
+        "skills_matrix.md": "skill",
+        "soft_skills.md": "soft_skill",
+    }
+    return content_type_map.get(filename.lower(), "unknown")
+
+
 def main():
     # Load all .md files - using TextLoader to preserve markdown headers
     loader = DirectoryLoader(DATA_DIR, glob="*.md", loader_cls=TextLoader)
     docs = loader.load()
     print(f"Loaded {len(docs)} documents")
 
-    # Split documents by markdown headers (both ## and ###)
-    # This keeps each job, project, or subsection as a single chunk
+    # Split documents by main markdown headers only (##)
+    # This keeps each major section as one chunk with all sub-content
     header_splitter = MarkdownHeaderTextSplitter(
         headers_to_split_on=[
             ("##", "section"),
-            ("###", "subsection"),
         ]
     )
 
     chunks = []
     for doc in docs:
         doc_chunks = header_splitter.split_text(doc.page_content)
-        # Preserve source metadata
+
+        # Get source filename and determine content_type
+        source_file = Path(doc.metadata.get("source", "unknown")).name
+        content_type = get_content_type(source_file)
+
+        # Preserve metadata
         for chunk in doc_chunks:
-            chunk.metadata["source"] = Path(doc.metadata.get("source", "unknown")).name
+            chunk.metadata["source"] = source_file
+            chunk.metadata["content_type"] = content_type
         chunks.extend(doc_chunks)
 
     print(f"Total chunks: {len(chunks)}")
