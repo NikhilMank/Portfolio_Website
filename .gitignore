@@ -206,3 +206,4 @@ backend/scripts/test_chunking.py
 backend/scripts/build_index_local.py
 data/faiss_index/index.pkl
 data/faiss_index/index.faiss
+.claude/
