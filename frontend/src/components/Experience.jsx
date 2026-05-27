@@ -11,7 +11,7 @@ const experiences = [
       'RAG Portfolio Website — Built a portfolio website with a serverless RAG chatbot using AWS (Lambda, S3, API Gateway) and a React frontend.',
       'Smart Receipt Scanner — Serverless web app using AWS (Lambda, S3, DynamoDB, API Gateway, Cognito) with OCR text extraction, multi-user authentication, and budget analytics with expense categorization.',
       'RAG Chatbot — Production-grade Q&A system using Azure OpenAI, Azure AI Search, and FastAPI; achieved 0.89 RAGAS faithfulness and improved answer relevance by 23% via A/B testing. Deployed as a containerized microservice on Azure Container Apps with automated CI/CD.',
-      'Web Scraper — Full-stack scraper curating research papers from Springer API, generating multilingual summarized PDF newsletters via ChatGPT API with secure authentication and table of contents.
+      'Web Scraper — Full-stack scraper curating research papers from Springer API, generating multilingual summarized PDF newsletters via ChatGPT API with secure authentication and table of contents.'
     ],
     stack: ['Python', 'LangChain', 'LangGraph', 'LangSmith', 'FastMCP', 'faster-whisper', 'pyannote.audio', 'FastAPI', 'AWS', 'Azure', 'React', 'Docker', 'GitHub Actions'],
   },
