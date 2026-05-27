@@ -47,6 +47,13 @@ const projects = [
     tags: ['PyTorch', 'FGSM', 'PGD', 'Adversarial Training', 'HPC'],
     github: null,
   },
+,
+  {
+    title: 'Travel-Agent — AI Trip Planner',
+    description: 'Conversational AI that gathers trip requirements and orchestrates parallel web‑search workers to generate a real‑time, day‑by‑day itinerary.',
+    tags: ['Python','LangGraph','LangChain','AWS Bedrock','FastAPI','Streamlit','Tavily','DuckDuckGo'],
+    github: 'https://github.com/NikhilMank/Travel-Agent',
+  }
 ]
 
 export default function Projects() {

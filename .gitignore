@@ -207,3 +207,5 @@ backend/scripts/build_index_local.py
 data/faiss_index/index.pkl
 data/faiss_index/index.faiss
 .claude/
+memory/project_portfolio_rag.md
+CLAUDE.md

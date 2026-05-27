@@ -485,3 +485,50 @@ Evaluated attacks on:
 - Security-aware AI
 - Experimental evaluation
 - Scientific problem solving
+
+---
+
+## Travel-Agent — AI Trip Planner
+
+### Overview
+An AI‑powered travel agent that plans complete trips through natural conversation. The agent gathers requirements step‑by‑step, then orchestrates parallel web‑search workers to build a real‑time itinerary.
+
+### How It Works
+1. **Detail Gathering** – a conversational sub‑graph asks the user one question at a time (destination, dates, budget, travelers, preferences) and stores the answers in an in‑memory state.
+2. **Readiness Detection** – once all required fields are filled, the user confirms, and the orchestrator triggers the planning pipeline.
+3. **Orchestrator Pipeline** – analyzes the trip details and launches parallel workers (flights, accommodation, attractions, food, transport). Each worker performs a web search (Tavily → DuckDuckGo → fallback to LLM knowledge) and a downstream LLM call to produce structured output.
+4. **Reducer** – combines the worker results into a coherent, day‑by‑day itinerary with budget breakdowns and practical tips.
+
+### Key Features
+- Natural‑language conversation that asks one question at a time.
+- Automatic date clarification and traveler‑count inference.
+- Parallel research workers with exponential back‑off retry handling.
+- Real‑time data via Tavily (primary) and DuckDuckGo (fallback).
+- In‑memory checkpointer keyed by session ID for state persistence without a database.
+- Full‑stack UI built with Streamlit (frontend) and FastAPI (backend).
+
+### Architecture
+- **Parent Graph** – top‑level LangGraph graph connecting `Detail Gathering → Orchestrator → Reducer`.
+- **Detail Gathering Subgraph** – includes a React‑style LLM agent, post‑processing extraction LLM, and readiness guard.
+- **Planner Pipeline** – orchestrator decides needed workers, each runs in parallel using `ThreadPoolExecutor`, then the reducer synthesises the final plan.
+- **Data Sources** – primary search via **Tavily**, fallback to **DuckDuckGo**, final fallback to Claude’s training data.
+- **Backend** – FastAPI exposing `/api/chat` and `/api/chat/welcome` endpoints.
+- **Frontend** – Streamlit single‑page chat app displaying the conversation, worker information icons, and the final itinerary.
+
+### Technologies
+- **Python 3.10+**, **LangGraph**, **LangChain**
+- **Claude Haiku 4.5** via **Amazon Bedrock**
+- **FastAPI**, **Uvicorn**
+- **Streamlit**
+- **Tavily API**, **DuckDuckGo**
+- **ThreadPoolExecutor**, **exponential back‑off retries**
+- **In‑memory checkpointer** (session‑ID keyed)
+
+### Skills Demonstrated
+- AI workflow orchestration with LangGraph
+- Prompt engineering for multi‑turn conversational agents
+- Real‑time web‑search integration and fallback strategies
+- Parallel task execution and robust retry handling
+- State management without persistent storage
+- Full‑stack development (FastAPI + Streamlit)
+- Deployment‑ready design (Dockerizable, environment‑variable configuration)
