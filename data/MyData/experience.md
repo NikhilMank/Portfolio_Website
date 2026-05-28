@@ -7,6 +7,105 @@ Siegen, Germany
 
 I have been building production-oriented AI applications focused on LLM systems, retrieval pipelines, cloud-native deployments, and automation. These projects are designed to demonstrate practical engineering capability across AI, backend, and cloud infrastructure.
 
+### Travel-Agent — AI Trip Planner
+
+An AI-powered travel agent that plans complete trips through natural conversation. The agent gathers requirements step-by-step, then orchestrates parallel web-search workers to build a real-time itinerary.
+
+#### Features
+- Natural-language conversation that asks one question at a time
+- Automatic date clarification and traveler-count inference
+- Parallel research workers with exponential back-off retry handling
+- Real-time data via Tavily (primary) and DuckDuckGo (fallback)
+- In-memory checkpointer keyed by session ID for state persistence without a database
+- Full-stack UI built with Streamlit (frontend) and FastAPI (backend)
+
+#### Architecture
+- Parent graph using LangGraph connecting Detail Gathering → Orchestrator → Reducer
+- Detail Gathering subgraph with React-style LLM agent and readiness guard
+- Parallel worker execution using ThreadPoolExecutor
+- Primary search via Tavily, fallback to DuckDuckGo, final fallback to LLM knowledge
+
+#### Tech Stack Used
+- Python
+- LangGraph
+- LangChain
+- Amazon Bedrock (Claude Haiku)
+- FastAPI
+- Streamlit
+- Tavily API
+- DuckDuckGo
+
+### Audio Transcriber MCP Server
+
+Built a local-first MCP (Model Context Protocol) server for high-performance audio transcription and speaker-aware speech processing using faster-whisper and pyannote.audio. The system enables AI assistants and MCP-compatible clients to transcribe audio files locally without sending data to external cloud services, improving privacy, offline usability, and performance control.
+
+#### Features
+- Local-first audio transcription
+- Speaker diarization with pyannote.audio
+- Timestamped transcription output
+- Batch transcription for folders
+- Multiple audio format support (via FFmpeg)
+- Lazy model loading for memory optimization
+- GPU acceleration via CUDA and Apple MPS
+- Offline diarization model support
+- MCP-compatible AI tooling integration
+
+#### Tech Stack Used
+- Python
+- FastMCP
+- faster-whisper
+- pyannote.audio
+- FFmpeg
+- PyTorch
+- NumPy
+- CUDA / Apple MPS
+
+### Expense Tracker MCP Server
+
+Designed and deployed a remotely hosted MCP (Model Context Protocol) expense tracking server that enables AI assistants to manage, analyze, and summarize financial data through structured tool calling and natural language workflows. The server is deployed using FastMCP's remote hosting platform, demonstrating cloud-based AI tooling deployment.
+
+#### Features
+- Remote MCP server deployment
+- Expense CRUD operations
+- Budget tracking and monitoring
+- Spending trend analytics
+- Category-based expense management
+- Recurring expense support
+- Monthly financial insights with AI-generated reports
+- Multi-user architecture with access-token isolation
+
+#### Tech Stack Used
+- Python
+- FastMCP
+- SQLite
+- aiosqlite
+- asyncio
+
+### AI Portfolio Website with RAG Chatbot
+
+Built an interactive portfolio website that includes a Retrieval-Augmented Generation (RAG) chatbot. Replaces the traditional static resume experience with a conversational interface where recruiters and hiring managers can ask questions about my background, projects, and technical skills.
+
+#### Architecture
+- React frontend for responsive user experience
+- Amazon S3 for static website hosting
+- Amazon CloudFront as CDN
+- API Gateway for secure API exposure
+- AWS Lambda for serverless backend logic
+- FAISS as vector database for similarity search
+- Amazon Bedrock Titan for embeddings
+- Claude via Amazon Bedrock for response generation
+
+#### Tech Stack Used
+- Python
+- LangChain
+- React
+- AWS Lambda
+- S3
+- CloudFront
+- API Gateway
+- FAISS
+- Amazon Bedrock
+
 ### Smart Receipt Scanner
 
 Built a serverless receipt scanning web application using AWS services.
@@ -103,9 +202,10 @@ Created a full-stack system where users can create their accounts, mention their
 - FastAPI
 - FastMCP
 - Docker
-- LLM APIs
+- Amazon Bedrock
 - AWS
 - Azure
+- React
 - GitHub
 - GitHub Actions
 
