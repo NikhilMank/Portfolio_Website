@@ -17,7 +17,7 @@ const skillGroups = [
   },
   {
     category: 'RAG & Agentic AI',
-    skills: ['LangChain', 'LangGraph', 'LangSmith', 'Amazon Bedrock Agentcore', 'Azure AI Foundry', 'FastMCP', 'FastAPI', 'Streamlit', 'RAGAS'],
+    skills: ['LangChain', 'LangGraph', 'LangSmith', 'Amazon Bedrock Agentcore', 'Azure AI Foundry', 'FastMCP', 'FastAPI', 'Streamlit', 'RAGAS', 'Tavily API', 'DuckDuckGo API', 'Parallelism', 'ReAct agents'],
   },
   {
     category: 'Databases & Retrieval',
