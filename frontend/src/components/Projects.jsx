@@ -19,8 +19,8 @@ const projects = [
   },
   {
     title: 'Production-Grade Azure RAG Chatbot',
-    description: 'Enterprise-style RAG chatbot for GDPR Q&A. Achieved 0.89 RAGAS faithfulness score and improved answer relevance by 23% through A/B testing.',
-    tags: ['Azure OpenAI', 'Azure AI Search', 'FastAPI', 'LangChain', 'Docker', 'RAGAS'],
+    description: 'Enterprise-style RAG chatbot for GDPR Q&A with three-tier answer logic (grounded, hybrid, off-topic), cited sources and a 3D retrieval visualisation. Deployed on Azure Container Apps via GitHub Actions CI/CD. Achieved 0.89 RAGAS faithfulness score and improved answer relevance by 23% through A/B testing.',
+    tags: ['Azure OpenAI', 'Azure AI Search', 'FastAPI', 'LangChain', 'Docker', 'Azure Container Apps', 'GitHub Actions', 'RAGAS'],
     github: 'https://github.com/BharAI-Lab/rag_azure_fastapi',
   },
   {
@@ -47,11 +47,10 @@ const projects = [
     tags: ['PyTorch', 'FGSM', 'PGD', 'Adversarial Training', 'HPC'],
     github: null,
   },
-,
   {
     title: 'Travel-Agent — AI Trip Planner',
-    description: 'Conversational AI that gathers trip requirements and orchestrates parallel web‑search workers to generate a real‑time, day‑by‑day itinerary.',
-    tags: ['Python','LangGraph','LangChain','AWS Bedrock','FastAPI','Streamlit','Tavily','DuckDuckGo'],
+    description: 'Deployed conversational AI trip planner. A LangGraph agent gathers requirements one question at a time, then runs parallel web-search workers (Tavily with DuckDuckGo fallback) to build a day-by-day itinerary with budget breakdown. React frontend on S3 and CloudFront, FastAPI on Lambda behind API Gateway, DynamoDB for chats and agent checkpoints, JWT auth with per-user chat isolation.',
+    tags: ['Python', 'LangGraph', 'LangChain', 'Claude Haiku 4.5', 'Amazon Bedrock', 'FastAPI', 'AWS Lambda', 'DynamoDB', 'API Gateway', 'React', 'CloudFront', 'Tavily', 'DuckDuckGo'],
     github: 'https://github.com/NikhilMank/Travel-Agent',
   }
 ]

@@ -209,3 +209,4 @@ data/faiss_index/index.faiss
 .claude/
 memory/project_portfolio_rag.md
 CLAUDE.md
+switch.sh

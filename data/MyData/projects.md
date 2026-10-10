@@ -258,29 +258,36 @@ Users upload a receipt image and the system automatically extracts relevant info
 
 ## Production-Grade Azure RAG Chatbot
 
-Designed and developed an enterprise-style Retrieval-Augmented Generation chatbot focused on accurate question answering over private knowledge sources.
+Designed and developed an enterprise-style Retrieval-Augmented Generation chatbot that answers questions about the EU GDPR (Articles and Recitals) with grounded, cited answers.
 
 This project was built to demonstrate modern LLMOps and production RAG system design.
 
 ### Core Objective
 
-Enable users to ask natural language questions while grounding responses in trusted indexed documents rather than relying only on base model knowledge.
+Enable users to ask natural language questions while grounding responses in trusted indexed documents rather than relying only on base model knowledge, and to degrade gracefully when the dataset does not contain the answer.
 
 ### Architecture
 
-- Azure OpenAI for generation
-- Azure AI Search for document retrieval
+- Azure OpenAI (GPT-4o chat and embeddings) for generation
+- Azure AI Search as the vector store for document retrieval
 - FastAPI backend service
-- Containerized deployment
-- Automated CI/CD pipelines
-- Frontend with JavaScript
+- Lightweight HTML/CSS/JavaScript single-page frontend with source citations and a 3D visualisation of the retrieved chunks
+- Docker container deployed to Azure Container Apps
+- GitHub Actions CI/CD pipeline that builds the image, pushes it to GitHub Container Registry and updates the Container App
+
+### Three-Tier Answer Logic
+
+- A small LLM call first classifies each question as GDPR-related or not
+- Grounded answer: GDPR question with a strong retrieval score is answered from the retrieved context only, with citations
+- Hybrid fallback: GDPR question with weak retrieval, or a model that signals the context is insufficient, returns clearly labelled general GDPR guidance
+- Off-topic: non-GDPR questions get a short, neutral general answer with no sources
 
 ### Key Achievements
 
 - Achieved **0.89 faithfulness score using RAGAS evaluation**
 - Improved answer relevance by **23% through A/B testing**
-- Reduced hallucination risk through retrieval grounding
-- Production-ready API deployment
+- Reduced hallucination risk through retrieval grounding and a relevance-score threshold
+- Production-ready API deployment with automated CI/CD
 
 ### Engineering Focus Areas
 
@@ -295,7 +302,7 @@ Enable users to ask natural language questions while grounding responses in trus
 
 - RAG architecture design
 - LLM evaluation
-- Cloud deployment
+- Cloud deployment (Azure Container Apps, GitHub Container Registry)
 - API engineering
 - Experiment-driven optimization
 - Azure Cloud Services usage
@@ -491,44 +498,47 @@ Evaluated attacks on:
 ## Travel-Agent — AI Trip Planner
 
 ### Overview
-An AI‑powered travel agent that plans complete trips through natural conversation. The agent gathers requirements step‑by‑step, then orchestrates parallel web‑search workers to build a real‑time itinerary.
+A deployed, AI-powered travel agent that plans complete trips through natural conversation. The agent gathers requirements step by step, then orchestrates parallel web-search workers to build a real-time, day-by-day itinerary with a budget breakdown and practical tips.
 
 ### How It Works
-1. **Detail Gathering** – a conversational sub‑graph asks the user one question at a time (destination, dates, budget, travelers, preferences) and stores the answers in an in‑memory state.
-2. **Readiness Detection** – once all required fields are filled, the user confirms, and the orchestrator triggers the planning pipeline.
-3. **Orchestrator Pipeline** – analyzes the trip details and launches parallel workers (flights, accommodation, attractions, food, transport). Each worker performs a web search (Tavily → DuckDuckGo → fallback to LLM knowledge) and a downstream LLM call to produce structured output.
-4. **Reducer** – combines the worker results into a coherent, day‑by‑day itinerary with budget breakdowns and practical tips.
+1. **Detail Gathering** – a conversational subgraph asks one question at a time (departure location, destination, dates, travelers, budget range) and extracts the answers into structured state. It clarifies ambiguous dates (e.g. 07.10) and infers traveler counts.
+2. **Readiness Detection** – once all required fields are filled and the user explicitly confirms, the orchestrator triggers the planning pipeline.
+3. **Orchestrator Pipeline** – decides which workers are needed and launches them in parallel (flights, accommodation, attractions, food, transport). Each worker performs a web search (Tavily, then DuckDuckGo, then fallback to the LLM's own knowledge) and a downstream LLM call, with exponential back-off retries for Bedrock throttling.
+4. **Reducer** – merges the worker results into a coherent day-by-day itinerary with accommodation, budget breakdown and practical tips.
 
 ### Key Features
-- Natural‑language conversation that asks one question at a time.
-- Automatic date clarification and traveler‑count inference.
-- Parallel research workers with exponential back‑off retry handling.
-- Real‑time data via Tavily (primary) and DuckDuckGo (fallback).
-- In‑memory checkpointer keyed by session ID for state persistence without a database.
-- Full‑stack UI built with Streamlit (frontend) and FastAPI (backend).
+- Natural-language conversation that asks one question at a time
+- Automatic date clarification and traveler-count inference
+- Parallel research workers with exponential back-off retry handling
+- Real-time data via Tavily (primary) and DuckDuckGo (fallback), with the data source shown in the UI
+- Persistent conversation state: a custom LangGraph checkpointer backed by DynamoDB
+- User accounts with JWT authentication, bcrypt password hashing and per-user chat isolation
+- Chat history with multiple conversations per user
 
 ### Architecture
-- **Parent Graph** – top‑level LangGraph graph connecting `Detail Gathering → Orchestrator → Reducer`.
-- **Detail Gathering Subgraph** – includes a React‑style LLM agent, post‑processing extraction LLM, and readiness guard.
-- **Planner Pipeline** – orchestrator decides needed workers, each runs in parallel using `ThreadPoolExecutor`, then the reducer synthesises the final plan.
-- **Data Sources** – primary search via **Tavily**, fallback to **DuckDuckGo**, final fallback to Claude’s training data.
-- **Backend** – FastAPI exposing `/api/chat` and `/api/chat/welcome` endpoints.
-- **Frontend** – Streamlit single‑page chat app displaying the conversation, worker information icons, and the final itinerary.
+- **Parent Graph** – top-level LangGraph graph connecting Detail Gathering, Orchestrator and Reducer
+- **Detail Gathering Subgraph** – a ReAct-style LLM agent with dynamically injected prompts, a post-processing extraction LLM and a readiness guard
+- **Planner Pipeline** – orchestrator decides the needed workers, each runs in parallel using a thread pool, then the reducer synthesises the final plan
+- **Backend** – FastAPI with Mangum running on AWS Lambda behind API Gateway
+- **Frontend** – React single-page app hosted on S3 behind CloudFront
+- **State** – DynamoDB tables for chats, messages, users and LangGraph checkpoints
+- **LLM** – Claude Haiku 4.5 via Amazon Bedrock
 
 ### Technologies
-- **Python 3.10+**, **LangGraph**, **LangChain**
+- **Python**, **LangGraph**, **LangChain**
 - **Claude Haiku 4.5** via **Amazon Bedrock**
-- **FastAPI**, **Uvicorn**
-- **Streamlit**
+- **FastAPI**, **Mangum**, **AWS Lambda**, **API Gateway**
+- **DynamoDB**
+- **React**, **Vite**, **S3**, **CloudFront**
 - **Tavily API**, **DuckDuckGo**
-- **ThreadPoolExecutor**, **exponential back‑off retries**
-- **In‑memory checkpointer** (session‑ID keyed)
+- **JWT**, **bcrypt**
+- **Exponential back-off retries**
 
 ### Skills Demonstrated
 - AI workflow orchestration with LangGraph
-- Prompt engineering for multi‑turn conversational agents
-- Real‑time web‑search integration and fallback strategies
+- Prompt engineering for multi-turn conversational agents
+- Real-time web-search integration and fallback strategies
 - Parallel task execution and robust retry handling
-- State management without persistent storage
-- Full‑stack development (FastAPI + Streamlit)
-- Deployment‑ready design (Dockerizable, environment‑variable configuration)
+- Serverless deployment on AWS (Lambda, API Gateway, DynamoDB, S3, CloudFront)
+- Custom authentication and per-user data isolation
+- Full-stack development (React + FastAPI)
