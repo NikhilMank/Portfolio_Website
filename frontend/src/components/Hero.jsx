@@ -17,9 +17,10 @@ export default function Hero() {
         <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
           Nikhil Mankali
         </h1>
-        <h2 className="text-xl sm:text-2xl text-indigo-600 dark:text-indigo-400 font-semibold mb-6">
+        <h2 className="text-xl sm:text-2xl text-indigo-600 dark:text-indigo-400 font-semibold mb-2">
           AI Engineer
         </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">📍 Mannheim, Germany</p>
         <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg mb-10 leading-relaxed">
           I build production-ready AI systems, from RAG pipelines and LLM applications
           to cloud-native deployments. Open to AI Engineer, GenAI Engineer, Backend Engineer, and MLOps & Cloud roles.

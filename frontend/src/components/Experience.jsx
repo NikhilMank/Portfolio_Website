@@ -2,7 +2,6 @@ const experiences = [
   {
     role: 'AI Engineer – Agentic AI, RAG Systems, LLMOps',
     company: 'Independent Projects / Proof of Concepts',
-    location: 'Siegen, Germany',
     period: '05/2025 – Present',
     points: [
       'Travel-Agent — Conversational AI trip planner that gathers requirements and orchestrates parallel web‑search workers to produce a real‑time itinerary.',
@@ -68,7 +67,7 @@ export default function Experience() {
                   <h3 className="font-semibold text-gray-900 dark:text-white">{exp.role}</h3>
                   <span className="text-sm text-indigo-600 dark:text-indigo-400 mt-1 md:mt-0 shrink-0">{exp.period}</span>
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{exp.company} · {exp.location}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{exp.company}{exp.location && ` · ${exp.location}`}</p>
                 <ul className="space-y-2 mb-4">
                   {exp.points.map((point, j) => (
                     <li key={j} className="text-sm text-gray-600 dark:text-gray-400 flex gap-2">

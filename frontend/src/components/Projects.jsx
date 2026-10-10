@@ -48,7 +48,7 @@ const projects = [
     github: null,
   },
   {
-    title: 'Travel-Agent — AI Trip Planner',
+    title: 'Travel-Agent - AI Trip Planner',
     description: 'Deployed conversational AI trip planner. A LangGraph agent gathers requirements one question at a time, then runs parallel web-search workers (Tavily with DuckDuckGo fallback) to build a day-by-day itinerary with budget breakdown. React frontend on S3 and CloudFront, FastAPI on Lambda behind API Gateway, DynamoDB for chats and agent checkpoints, JWT auth with per-user chat isolation.',
     tags: ['Python', 'LangGraph', 'LangChain', 'Claude Haiku 4.5', 'Amazon Bedrock', 'FastAPI', 'AWS Lambda', 'DynamoDB', 'API Gateway', 'React', 'CloudFront', 'Tavily', 'DuckDuckGo'],
     github: 'https://github.com/NikhilMank/Travel-Agent',

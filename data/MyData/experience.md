@@ -2,7 +2,6 @@
 
 ## AI Engineer – Agentic AI, RAG Systems, LLMOps  
 **Independent Projects / Proof of Concepts**  
-Siegen, Germany  
 05/2025 – Present
 
 I have been building production-oriented AI applications focused on LLM systems, retrieval pipelines, cloud-native deployments, and automation. These projects are designed to demonstrate practical engineering capability across AI, backend, and cloud infrastructure.

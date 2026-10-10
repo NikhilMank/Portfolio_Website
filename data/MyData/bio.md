@@ -1,7 +1,7 @@
 
 # Contact
 
-Location: Siegen, Germany (Open to Relocation)
+Location: Mannheim, Germany (Open to Relocation)
 Languages: English (C1/C2), German (B1/B2), Telugu (Native), Hindi (Native)
 Email: mankalinikhil9@gmail.com
 Phone: +49 17613428740
