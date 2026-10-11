@@ -542,3 +542,53 @@ A deployed, AI-powered travel agent that plans complete trips through natural co
 - Serverless deployment on AWS (Lambda, API Gateway, DynamoDB, S3, CloudFront)
 - Custom authentication and per-user data isolation
 - Full-stack development (React + FastAPI)
+
+---
+
+## Telefonassistent — German Voice Service Agent (Work in Progress)
+
+**Status: in progress.** This is an ongoing project that is not finished. The phases below that are marked as done are complete; the rest are planned and have not been built yet.
+
+### Overview
+
+A German-language inbound service-call voice agent that runs fully locally. The goal is to build a real-time voice pipeline and to deeply understand every component along the way: LiveKit, voice activity detection, speech recognition, text-to-speech, and latency instrumentation.
+
+### Planned Architecture
+
+- Transport: LiveKit (open source, Docker) with a browser WebRTC client
+- Voice activity detection: Silero VAD on CPU
+- Speech-to-text: faster-whisper `small`, int8, on GPU
+- LLM: Qwen2.5-3B-Instruct (Q4_K_M) via Ollama, on GPU
+- Text-to-speech: Piper with a German voice, on CPU
+- Tools: local Python functions writing to local storage
+- Observability: OpenTelemetry spans and Prometheus metrics with a Grafana dashboard showing per-stage p50/p95 latency
+- Evaluation: an eval harness with a scorecard, including word error rate for speech recognition
+
+### Progress
+
+- Phase 0, hardware benchmark: done. Measured p50/p95 latency and VRAM use for each component on a laptop with a 4GB NVIDIA GTX 1050 Ti (Pascal). The results show Whisper and the LLM are fast enough for conversation (about 40 ms for speech-to-text, about 326 ms to first LLM token), the combined VRAM budget fits, and Piper synthesis is the bottleneck.
+- Phase 1, media path: done. A LiveKit echo agent that returns the user's browser audio through the WebRTC pipeline.
+- Phase 2 (VAD and speech-to-text) onward: not started.
+
+### Engineering Notes
+
+- Hardware-aware design: the Pascal GPU has very slow FP16, so all local inference uses int8 quantization.
+- Latency budgeting: component benchmarks are used to set the latency budget for each later phase.
+
+### Technologies
+
+- Python
+- LiveKit and WebRTC
+- faster-whisper
+- Silero VAD
+- Ollama (Qwen2.5-3B)
+- Piper TTS
+- Docker
+- OpenTelemetry, Prometheus and Grafana (planned)
+
+### Skills Demonstrated
+
+- Real-time voice AI pipelines
+- Local LLM and speech model deployment
+- Latency benchmarking and budgeting
+- Hardware-constrained inference optimization

@@ -52,6 +52,13 @@ const projects = [
     description: 'Deployed conversational AI trip planner. A LangGraph agent gathers requirements one question at a time, then runs parallel web-search workers (Tavily with DuckDuckGo fallback) to build a day-by-day itinerary with budget breakdown. React frontend on S3 and CloudFront, FastAPI on Lambda behind API Gateway, DynamoDB for chats and agent checkpoints, JWT auth with per-user chat isolation.',
     tags: ['Python', 'LangGraph', 'LangChain', 'Claude Haiku 4.5', 'Amazon Bedrock', 'FastAPI', 'AWS Lambda', 'DynamoDB', 'API Gateway', 'React', 'CloudFront', 'Tavily', 'DuckDuckGo'],
     github: 'https://github.com/NikhilMank/Travel-Agent',
+  },
+  {
+    title: 'Telefonassistent — German Voice Service Agent',
+    status: 'In progress',
+    description: 'Work-in-progress German-language inbound service-call voice agent, built fully local on a 4GB GPU. Planned pipeline: LiveKit (WebRTC) transport, Silero VAD, faster-whisper STT, Qwen2.5-3B via Ollama, and Piper TTS, with Prometheus and OpenTelemetry latency metrics. Hardware latency benchmark and the browser-to-agent audio echo path are done; speech recognition is next.',
+    tags: ['Python', 'LiveKit', 'WebRTC', 'faster-whisper', 'Ollama', 'Piper TTS', 'Silero VAD', 'Docker'],
+    github: null,
   }
 ]
 
@@ -65,6 +72,11 @@ export default function Projects() {
             <div key={i} className="bg-gray-100 dark:bg-gray-900 rounded-xl p-6 border border-gray-300 dark:border-gray-800 flex flex-col justify-between hover:border-indigo-500 transition-colors">
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{project.title}</h3>
+                {project.status && (
+                  <span className="inline-block mb-3 px-2 py-1 text-xs font-medium bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 rounded-md border border-amber-200 dark:border-amber-800">
+                    {project.status}
+                  </span>
+                )}
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">{project.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map(tag => (
